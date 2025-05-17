@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    android:background="@color/white">
+
+    <!-- Título de la pantalla -->
+    <TextView
+        android:id="@+id/tvSignUpTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear Cuenta"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Campo de texto para el nombre de usuario -->
+    <EditText
+        android:id="@+id/etSignUpUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre de usuario"
+        android:inputType="text"
+        android:drawableStart="@drawable/ic_user"
+        android:padding="12dp"
+        android:background="@drawable/edittext_background"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Campo de texto para la contraseña -->
+    <EditText
+        android:id="@+id/etSignUpPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:drawableStart="@drawable/ic_password"
+        android:padding="12dp"
+        android:background="@drawable/edittext_background"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Campo de texto para confirmar la contraseña -->
+    <EditText
+        android:id="@+id/etConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirmar contraseña"
+        android:inputType="textPassword"
+        android:drawableStart="@drawable/ic_password"
+        android:padding="12dp"
+        android:background="@drawable/edittext_background"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Botón para registrarse -->
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registrarse"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        android:textStyle="bold" />
+
+    <!-- Enlace para volver al inicio de sesión -->
+    <TextView
+        android:id="@+id/tvGoToLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Ya tienes cuenta? Inicia sesión"
+        android:textSize="14sp"
+        android:textColor="@color/primary"
+        android:layout_marginTop="16dp"
+        android:gravity="center" />
+</LinearLayout>

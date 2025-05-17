@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">My-Track-Fit</string>
+    <string name="workouts">Workouts</string>
+    <string name="body_weight">Body weight</string>
+    <string name="statistics">Statistics</string>
+</resources>
