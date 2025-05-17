@@ -1,8 +1,8 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const { DataSource } = require("typeorm");
-const AuthService = require("./autenticacion");
-const createAuthRouter = require("./routes/auth");
+import express from "express";
+import dotenv from "dotenv";
+import { DataSource } from "typeorm";
+import AuthService from "./autenticacion.js";
+import createAuthRouter from "./routes/auth.js";
 
 dotenv.config();
 

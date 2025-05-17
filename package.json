@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec node index.js"
+    "dev": "nodemon --exec node My-Track-Fit-api/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,9 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "mssql": "^11.0.1",
+    "typeorm": "^0.3.24"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

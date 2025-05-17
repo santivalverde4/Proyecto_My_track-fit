@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-module.exports = (authService) => {
+const createAuthRouter = (authService) => {
   // Endpoint para login
   router.post("/login", async (req, res) => {
     const { Username, Password } = req.body;
@@ -34,3 +34,5 @@ module.exports = (authService) => {
 
   return router;
 };
+
+export default createAuthRouter;

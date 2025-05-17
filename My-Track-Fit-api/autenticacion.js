@@ -1,4 +1,5 @@
-const { TYPES } = require("mssql");
+import pkg from "mssql";
+const { TYPES } = pkg;
 
 class AuthService {
   constructor(execute) {
@@ -49,4 +50,4 @@ class AuthService {
   }
 }
 
-module.exports = AuthService;
+export default AuthService;
