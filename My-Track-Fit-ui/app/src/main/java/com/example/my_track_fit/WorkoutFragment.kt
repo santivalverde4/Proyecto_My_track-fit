@@ -26,7 +26,6 @@ class WorkoutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Acceder al workout de MainActivity
         val workout = (activity as? MainActivity)?.workout
     
@@ -116,5 +115,87 @@ class WorkoutFragment : Fragment() {
             }
             dialog.show()
         }
+
+        // Botón para mostrar el diálogo de ejercicios
+        val btnShowExercises = view.findViewById<Button>(R.id.btnShowExercises)
+        btnShowExercises.setOnClickListener {
+            val dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_exercise_list, null)
+            val recyclerExercises = dialogView.findViewById<RecyclerView>(R.id.recyclerExercises)
+            val btnAddExercise = dialogView.findViewById<Button>(R.id.btnAddExercise)
+
+            // Callback para long click en Exercise
+            val onExerciseLongClick: (com.example.my_track_fit.model.Exercise, Int) -> Unit = { exercise, position ->
+                val options = arrayOf("Cambiar nombre", "Eliminar ejercicio")
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Opciones de ejercicio")
+                    .setItems(options) { _, which ->
+                        when (which) {
+                            0 -> { // Cambiar nombre
+                                val inputView = EditText(requireContext())
+                                inputView.setText(exercise.getName())
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Cambiar nombre del ejercicio")
+                                    .setView(inputView)
+                                    .setPositiveButton("Aceptar") { _, _ ->
+                                        val newName = inputView.text.toString().trim()
+                                        if (newName.isNotEmpty()) {
+                                            exercise.setName(newName)
+                                            recyclerExercises.adapter?.notifyItemChanged(position)
+                                        } else {
+                                            Toast.makeText(requireContext(), "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    .setNegativeButton("Cancelar", null)
+                                    .show()
+                            }
+                            1 -> { // Eliminar ejercicio
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Eliminar ejercicio")
+                                    .setMessage("¿Realmente quieres borrar el ejercicio \"${exercise.getName()}\"?")
+                                    .setPositiveButton("Aceptar") { _, _ ->
+                                        workout?.deleteExercise(exercise)
+                                        recyclerExercises.adapter?.notifyDataSetChanged()
+                                    }
+                                    .setNegativeButton("Cancelar", null)
+                                    .show()
+                            }
+                        }
+                    }
+                    .show()
+            }
+
+            val exerciseAdapter = ExerciseAdapter(workout?.getExercise() ?: listOf(), onExerciseLongClick)
+            recyclerExercises.layoutManager = LinearLayoutManager(requireContext())
+            recyclerExercises.adapter = exerciseAdapter
+
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setTitle("Ejercicios")
+                .setNegativeButton("Cerrar", null)
+                .create()
+
+            btnAddExercise.setOnClickListener {
+                val inputView = EditText(requireContext())
+                inputView.hint = "Nombre del ejercicio"
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Añadir ejercicio")
+                    .setView(inputView)
+                    .setPositiveButton("Añadir") { _, _ ->
+                        val nombre = inputView.text.toString().trim()
+                        if (nombre.isNotEmpty()) {
+                            workout?.addExercise(nombre)
+                            exerciseAdapter.notifyDataSetChanged()
+                        } else {
+                            Toast.makeText(requireContext(), "Escribe un nombre", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+
+            dialog.show()
+        }
+
     }
 }
