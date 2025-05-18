@@ -34,6 +34,8 @@ class RoutineDetailFragment : Fragment() {
     private var routineIndex: Int = -1
     private lateinit var spinnerWeeks: Spinner
     private lateinit var recyclerView: RecyclerView
+    private lateinit var btnAddWeek: Button
+    private lateinit var btnAddBlock: Button
 
     // Haz que el callback sea propiedad de la clase
     private val onBlockLongClick: (com.example.my_track_fit.model.Block, Int) -> Unit = { block, position ->
@@ -69,7 +71,18 @@ class RoutineDetailFragment : Fragment() {
                             .setMessage("¿Realmente quieres borrar el bloque \"${block.getName()}\"?")
                             .setPositiveButton("Aceptar") { _, _ ->
                                 week?.deleteBlock(block)
-                                updateBlocksForSelectedWeek()
+                                // Si la semana quedó vacía, elimínala de la rutina
+                                if (week != null && week.getBlockList().isEmpty()) {
+                                    routine?.getWeeks()?.removeAt(selectedWeekIndex)
+                                    // Opcional: muestra un mensaje
+                                    Toast.makeText(context, "Semana eliminada porque no tiene bloques", Toast.LENGTH_SHORT).show()
+                                    // Actualiza el spinner y selecciona la semana anterior o la primera
+                                    updateWeeksSpinnerAndButton(
+                                        (selectedWeekIndex - 1).coerceAtLeast(0)
+                                    )
+                                } else {
+                                    updateBlocksForSelectedWeek()
+                                }
                             }
                             .setNegativeButton("Cancelar", null)
                             .show()
@@ -91,6 +104,23 @@ class RoutineDetailFragment : Fragment() {
         recyclerView.adapter = blockAdapter
     }
 
+    private fun updateWeeksSpinnerAndButton(selectedIndex: Int = spinnerWeeks.selectedItemPosition) {
+        val weeks = routine?.getWeeks() ?: mutableListOf()
+        val weekNames = weeks.mapIndexed { index, _ -> "Semana ${index + 1}" }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, weekNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerWeeks.adapter = adapter
+
+        btnAddWeek.visibility = if (
+            weeks.size == 1 && weeks[0].getBlockList().isEmpty()
+        ) View.GONE else View.VISIBLE
+
+        // Selecciona la semana indicada (o la última si el índice es inválido)
+        if (weeks.isNotEmpty()) {
+            spinnerWeeks.setSelection(selectedIndex.coerceAtMost(weeks.size - 1))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -109,8 +139,8 @@ class RoutineDetailFragment : Fragment() {
         val tvRoutineName = view.findViewById<TextView>(R.id.tvRoutineName)
         recyclerView = view.findViewById(R.id.blocksRecyclerView)
         spinnerWeeks = view.findViewById(R.id.spinnerWeeks)
-        val btnAddWeek = view.findViewById<Button>(R.id.btnAddWeek)
-        val btnAddBlock = view.findViewById<Button>(R.id.btnAddBlock)
+        btnAddWeek = view.findViewById(R.id.btnAddWeek)
+        btnAddBlock = view.findViewById(R.id.btnAddBlock)
 
         tvRoutineName.text = routine?.getName() ?: ""
 
@@ -124,23 +154,6 @@ class RoutineDetailFragment : Fragment() {
         )
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = blockAdapter
-
-        fun updateWeeksSpinnerAndButton(selectedIndex: Int = spinnerWeeks.selectedItemPosition) {
-            val weeks = routine?.getWeeks() ?: mutableListOf()
-            val weekNames = weeks.mapIndexed { index, _ -> "Semana ${index + 1}" }
-            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, weekNames)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinnerWeeks.adapter = adapter
-
-            btnAddWeek.visibility = if (
-                weeks.size == 1 && weeks[0].getBlockList().isEmpty()
-            ) View.GONE else View.VISIBLE
-
-            // Selecciona la semana indicada (o la última si el índice es inválido)
-            if (weeks.isNotEmpty()) {
-                spinnerWeeks.setSelection(selectedIndex.coerceAtMost(weeks.size - 1))
-            }
-        }
 
         updateWeeksSpinnerAndButton()
 
