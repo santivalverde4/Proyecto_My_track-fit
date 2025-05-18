@@ -32,6 +32,20 @@ const createAuthRouter = (authService) => {
     }
   });
 
+  router.post("/forgot-password", async (req, res) => {
+  const { Email } = req.body;
+  try {
+    const result = await authService.forgotPassword({ Email });
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({ success: false, message: result.message });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error interno del servidor" });
+  }
+});
+
   return router;
 };
 

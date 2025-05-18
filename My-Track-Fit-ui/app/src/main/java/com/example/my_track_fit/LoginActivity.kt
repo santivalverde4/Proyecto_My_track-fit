@@ -7,13 +7,17 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.my_track_fit.network.ApiService
 import com.example.my_track_fit.network.LoginRequest
 import com.example.my_track_fit.network.LoginResponse
 import com.example.my_track_fit.network.RetrofitClient
+import com.example.my_track_fit.network.ForgotPasswordRequest
+import com.example.my_track_fit.network.ForgotPasswordResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.app.AlertDialog
+import android.view.LayoutInflater
+import android.widget.ImageButton
 
 class LoginActivity : AppCompatActivity() {
 
@@ -25,25 +29,30 @@ class LoginActivity : AppCompatActivity() {
         val usernameEditText = findViewById<EditText>(R.id.etUsername)
         val passwordEditText = findViewById<EditText>(R.id.etPassword)
         val loginButton = findViewById<Button>(R.id.btnLogin)
-        val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp) // Vincular el TextView para registro
+        val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp)
+        val forgotPasswordTextView = findViewById<TextView>(R.id.tvForgotPassword)
 
-        // Configurar el botón de inicio de sesión
+        // Botón de inicio de sesión
         loginButton.setOnClickListener {
             val username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            // Validar los datos ingresados
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(username, password) // Llamar al método para enviar los datos al backend
+                loginUser(username, password)
             } else {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Configurar el enlace para ir a la pantalla de registro
+        // Enlace para ir a la pantalla de registro
         signUpTextView.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
+        }
+
+        // Enlace para recuperar contraseña
+        forgotPasswordTextView.setOnClickListener {
+            showForgotPasswordDialog()
         }
     }
 
@@ -55,16 +64,68 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    // Guarda el userId en SharedPreferences
+                    val userId = response.body()?.Id ?: -1
+                    getSharedPreferences("my_prefs", MODE_PRIVATE)
+                        .edit()
+                        .putInt("USER_ID", userId)
+                        .apply()
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
-                    finish() // Evita que el usuario regrese al login con el botón de retroceso
+                    finish()
                 } else {
                     Toast.makeText(this@LoginActivity, "Error: "+(response.body()?.message ?: "Error desconocido"), Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-               Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun showForgotPasswordDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.forgot_password_dialog, null)
+        val emailEditText = dialogView.findViewById<EditText>(R.id.etForgotEmail)
+        val sendButton = dialogView.findViewById<Button>(R.id.btnSendForgot)
+        val closeButton = dialogView.findViewById<ImageButton>(R.id.btnClose)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        closeButton.setOnClickListener { dialog.dismiss() }
+
+        sendButton.setOnClickListener {
+            val email = emailEditText.text.toString()
+            if (email.isNotEmpty()) {
+                sendForgotPasswordRequest(email, dialog)
+            } else {
+                Toast.makeText(this, "Ingresa tu correo", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun sendForgotPasswordRequest(email: String, dialog: AlertDialog) {
+        val request = ForgotPasswordRequest(email)
+        RetrofitClient.instance.forgotPassword(request).enqueue(object : Callback<ForgotPasswordResponse> {
+            override fun onResponse(
+                call: Call<ForgotPasswordResponse>,
+                response: Response<ForgotPasswordResponse>
+            ) {
+                if (response.isSuccessful && response.body()?.success == true) {
+                    Toast.makeText(this@LoginActivity, "Correo enviado. Revisa tu bandeja.", Toast.LENGTH_LONG).show()
+                    dialog.dismiss()
+                } else {
+                    Toast.makeText(this@LoginActivity, response.body()?.message ?: "Correo no encontrado", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ForgotPasswordResponse>, t: Throwable) {
+                Toast.makeText(this@LoginActivity, "Error de red", Toast.LENGTH_SHORT).show()
             }
         })
     }

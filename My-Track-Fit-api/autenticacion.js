@@ -49,6 +49,25 @@ class AuthService {
       throw new Error(`An error occurred while signing up: ${error}`);
     }
   }
+
+  async forgotPassword({ Email }) {
+    const params = {
+      inCorreo: [Email, TYPES.VarChar]
+    };
+    try {
+      const response = await this.execute("sp_VerificarCorreo", params, { OutResultCode: TYPES.Int });
+      if (response.output && response.output.OutResultCode === 0) {
+        // Aquí deberías enviar el correo con la contraseña encontrada (usa nodemailer o similar)
+        // Ejemplo: await sendMail(Email, response.recordset[0].Contraseña);
+        return { success: true, message: "Correo enviado correctamente." };
+      } else {
+        return { success: false, message: "Correo no encontrado." };
+      }
+    } catch (error) {
+      return { success: false, message: "Error al procesar la solicitud." };
+    }
+  }
+
 }
 
 export default AuthService;

@@ -15,6 +15,9 @@ data class CreateBodyweightRequest(val userId: Int, val peso: Int)
 data class UpdateBodyweightRequest(val userId: Int, val peso: Int)
 data class DeleteBodyweightRequest(val userId: Int)
 
+data class ForgotPasswordRequest(val Email: String)
+data class ForgotPasswordResponse(val success: Boolean, val message: String)
+
 // API SERVICE
 interface ApiService {
     // Auth
@@ -36,6 +39,9 @@ interface ApiService {
 
     @HTTP(method = "DELETE", path = "bodyweight/{id}", hasBody = true)
     fun deleteBodyweight(@Path("id") id: Int, @Body request: DeleteBodyweightRequest): Call<Void>
+
+    @POST("forgot-password")
+    fun forgotPassword(@Body request: ForgotPasswordRequest): Call<ForgotPasswordResponse>
 }
 
 // SINGLETON RETROFIT
