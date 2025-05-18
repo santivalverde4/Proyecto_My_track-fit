@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.my_track_fit.MainActivity
 import com.example.my_track_fit.R
 import com.example.my_track_fit.model.Block
+import android.widget.Toast
+import android.app.AlertDialog
 
 class BlockDetailFragment : Fragment() {
     companion object {
@@ -58,12 +60,39 @@ class BlockDetailFragment : Fragment() {
 
         tvBlockName.text = block?.getName() ?: ""
 
-        val initialInstances = block?.getExerciseInstanceList() ?: listOf()
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val initialInstances = block?.getExerciseInstanceList() ?: mutableListOf()
+        val onExerciseInstanceLongClick: (com.example.my_track_fit.model.ExerciseInstance, Int) -> Unit = { instance, position ->
+            AlertDialog.Builder(requireContext())
+                .setTitle("Eliminar ejercicio")
+                .setMessage("¿Desea eliminar este ejercicio?")
+                .setPositiveButton("Aceptar") { _, _ ->
+                    block?.deleteExerciseInstance(instance)
+                    recyclerView.adapter?.notifyItemRemoved(position)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
 
-        // Deja el botón "+" sin acción por ahora
+        val exerciseInstanceAdapter = ExerciseInstanceAdapter(initialInstances, onExerciseInstanceLongClick)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = exerciseInstanceAdapter
+
         btnAddExerciseInstance.setOnClickListener {
-            // Sin acción
+            val exerciseList = workout?.getExercise() ?: listOf()
+            if (exerciseList.isEmpty()) {
+                Toast.makeText(requireContext(), "No hay ejercicios disponibles", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val exerciseNames = exerciseList.map { it.getName() }.toTypedArray()
+            AlertDialog.Builder(requireContext())
+                .setTitle("Selecciona un ejercicio")
+                .setItems(exerciseNames) { _, which ->
+                    val selectedExercise = exerciseList[which]
+                    block?.addExerciseInstance(selectedExercise)
+                    exerciseInstanceAdapter.notifyDataSetChanged()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
     }
 }
