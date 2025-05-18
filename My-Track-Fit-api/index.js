@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import AuthService from "./autenticacion.js";
 import createAuthRouter from "./routes/auth.js";
+import createBodyweightRouter from "./routes/bodyweight.js"; // <-- Importa la nueva ruta
 
 dotenv.config();
 
@@ -65,6 +66,9 @@ async function execute(storedProcedure, inParams = {}, outParams = {}) {
 const authService = new AuthService(execute);
 const authRouter = createAuthRouter(authService);
 app.use("/api", authRouter);
+
+// Aquí agregas la nueva ruta:
+app.use("/api/bodyweight", createBodyweightRouter(execute));
 
 app.get("/", (req, res) => {
   res.send("API is running...");

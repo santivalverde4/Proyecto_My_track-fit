@@ -3,25 +3,41 @@ package com.example.my_track_fit.network
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
-
+// MODELOS
 data class LoginRequest(val Username: String, val Password: String)
-
-// Define la respuesta que se recibe del backend
 data class LoginResponse(val success: Boolean, val message: String, val Id: Int?)
 
-// Define las rutas del API
+data class Bodyweight(val id: Int, val peso: Int, val fecha: String)
+data class CreateBodyweightRequest(val userId: Int, val peso: Int)
+data class UpdateBodyweightRequest(val userId: Int, val peso: Int)
+data class DeleteBodyweightRequest(val userId: Int)
+
+// API SERVICE
 interface ApiService {
+    // Auth
     @POST("login")
     fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
 
     @POST("signup")
     fun signUpUser(@Body request: LoginRequest): Call<LoginResponse>
+
+    // Bodyweight
+    @GET("bodyweight/{userId}")
+    fun getBodyweights(@Path("userId") userId: Int): Call<List<Bodyweight>>
+
+    @POST("bodyweight")
+    fun createBodyweight(@Body request: CreateBodyweightRequest): Call<Void>
+
+    @PUT("bodyweight/{id}")
+    fun updateBodyweight(@Path("id") id: Int, @Body request: UpdateBodyweightRequest): Call<Void>
+
+    @HTTP(method = "DELETE", path = "bodyweight/{id}", hasBody = true)
+    fun deleteBodyweight(@Path("id") id: Int, @Body request: DeleteBodyweightRequest): Call<Void>
 }
 
-// Singleton para Retrofit
+// SINGLETON RETROFIT
 object RetrofitClient {
     private const val BASE_URL = "http://10.0.2.2:3000/api/"
 
