@@ -3,41 +3,39 @@ package com.example.my_track_fit.model
 class Week(
     //Attributes / constructor
     //val id: Int = 0, // Data base assigns automatically the id
-    private var exerciseInstanceList: MutableList<ExerciseInstance>,
-    private var block: Block
+    private var blockList: MutableList<Block>,
+    private var routine: Routine
 ) {
     // Getters & setters
-    //---exerciseInstanceList
-    fun getExerciseInstanceList(): MutableList<ExerciseInstance> {
-        return exerciseInstanceList
+    //---blockList
+    fun setBlockList(blockList: MutableList<Block>){
+        this.blockList = blockList
+    }
+    fun getBlockList(): MutableList<Block> {
+        return blockList
     }
 
-    fun setExerciseInstanceList(exerciseInstanceList: MutableList<ExerciseInstance>) {
-        this.exerciseInstanceList = exerciseInstanceList
+
+    //---routine
+    fun getRoutine(): Routine {
+        return routine
     }
 
-    //---block
-    fun getBlock(): Block {
-        return block
+    fun setRoutine(routine: Routine) {
+        this.routine = routine
     }
 
-    fun setBlock(block: Block) {
-        this.block = block
-    }
-
-    //Methods
-    fun addExerciseInstance(exercise: Exercise) {
-        // Create new ExerciseInstance object
-        val newExerciseInstance = ExerciseInstance(
-            week = this,
-            exercise = exercise,
-            setsData = mutableMapOf() //initialize the dictionary
+    //methods
+    fun addBlock(blockName: String) {
+        val newBlock = Block(
+            name = blockName,
+            exerciseInstanceList = mutableListOf(),
+            week = this
         )
-        exerciseInstanceList.add(newExerciseInstance)
+        blockList.add(newBlock)
     }
 
-    //---deleteExerciseInstance
-    fun deleteExerciseInstance(exerciseInstance: ExerciseInstance) {
-        exerciseInstanceList.remove(exerciseInstance)
+    fun deleteBlock(block: Block){
+        blockList.remove(block)
     }
 }

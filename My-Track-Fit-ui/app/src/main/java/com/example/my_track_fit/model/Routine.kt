@@ -1,12 +1,20 @@
 package com.example.my_track_fit.model
 
 class Routine (
-    //Attributes / constructor
     //val id: Int = 0, // Data base assigns automatically the id
     private var name: String,
-    private var blockList: MutableList<Block>,
+    private var weekList: MutableList<Week> = mutableListOf(), // Se inicializa por defecto
     private var workout: Workout
 ) {
+    init {
+        // Si la lista está vacía, agrega una semana inicial
+        if (weekList.isEmpty()) {
+            weekList.add(Week(
+                blockList = mutableListOf(),
+                routine = this
+            ))
+        }
+    }
     //Getters & setters
     //---name
     fun setName(name: String){
@@ -22,26 +30,78 @@ class Routine (
     fun getWorkout(): Workout {
         return workout
     }
-    //---blockList
-    fun setBlockList(blockList: MutableList<Block>){
-        this.blockList = blockList
+    //---weeks
+    fun setWeeks(weekList: MutableList<Week>){
+        this.weekList = weekList
     }
-    fun getBlockList(): MutableList<Block> {
-        return blockList
+    fun getWeeks(): MutableList<Week> {
+        return weekList
     }
 
-    //methods
-    fun addBlock(blockName: String) {
-        // Crear un nuevo objeto Block
-        val newBlock = Block(
-            name = blockName, // Asignar el nombre pasado por parámetro
-            weeks = mutableListOf(), // Inicializar la lista de semanas vacía
-            routine = this // Asignar la rutina actual
+    //Methods
+    fun addWeek() {
+        val newWeek = Week(
+            blockList = mutableListOf(),
+            routine = this
         )
-        // Agregar el nuevo bloque a la lista de bloques
-        blockList.add(newBlock)
+        weekList.add(newWeek)
     }
-    fun deleteBlock(block: Block) {
-        blockList.remove(block)
+
+    // Copia la semana completa (con datos)
+    fun copyWeekData(week: Week): Week {
+        val newWeek = Week(
+            blockList = mutableListOf(),
+            routine = this
+        )
+
+        val newBlockList = week.getBlockList().map { block ->
+            val newExerciseInstances = block.getExerciseInstanceList().map { exerciseInstance ->
+                ExerciseInstance(
+                    block = block, // Si necesitas que apunte al nuevo bloque, ajusta después
+                    exercise = exerciseInstance.getExercise(),
+                    setsData = exerciseInstance.getSetsData().mapValues { (_, setData) ->
+                        ExerciseInstance.SetData(setData.weight, setData.reps, setData.rpe)
+                    }.toMutableMap()
+                )
+            }.toMutableList()
+            Block(
+                name = block.getName(),
+                exerciseInstanceList = newExerciseInstances,
+                week = newWeek
+            )
+        }.toMutableList()
+
+        newWeek.setBlockList(newBlockList)
+        return newWeek
+    }
+
+    // Copia la semana pero los ExerciseInstance tendrán setsData vacío
+    fun copyWeekNoData(week: Week): Week {
+        val newWeek = Week(
+            blockList = mutableListOf(),
+            routine = this
+        )
+
+        val newBlockList = week.getBlockList().map { block ->
+            val newExerciseInstances = block.getExerciseInstanceList().map { exerciseInstance ->
+                ExerciseInstance(
+                    block = block, // Si necesitas que apunte al nuevo bloque, ajusta después
+                    exercise = exerciseInstance.getExercise(),
+                    setsData = mutableMapOf()
+                )
+            }.toMutableList()
+            Block(
+                name = block.getName(),
+                exerciseInstanceList = newExerciseInstances,
+                week = newWeek
+            )
+        }.toMutableList()
+
+        newWeek.setBlockList(newBlockList)
+        return newWeek
+    }
+
+    fun deleteWeek(week: Week) {
+        weekList.remove(week)
     }
 }
