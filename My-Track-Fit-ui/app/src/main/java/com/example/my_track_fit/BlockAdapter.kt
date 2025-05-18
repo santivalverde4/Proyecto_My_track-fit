@@ -13,7 +13,8 @@ import com.example.my_track_fit.BlockDetailFragment
 class BlockAdapter(
     private var blocks: List<Block>,
     private val routineIndex: Int,
-    private val weekIndex: Int
+    private val weekIndex: Int,
+    private val onBlockLongClick: ((Block, Int) -> Unit)? = null // Nuevo parámetro
 ) : RecyclerView.Adapter<BlockAdapter.BlockViewHolder>() {
 
     class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,6 +37,10 @@ class BlockAdapter(
                 )
                 ?.addToBackStack(null)
                 ?.commit()
+        }
+        holder.itemView.setOnLongClickListener {
+            onBlockLongClick?.invoke(blocks[position], position)
+            true
         }
     }
 

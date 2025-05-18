@@ -31,6 +31,65 @@ class RoutineDetailFragment : Fragment() {
 
     private var routine: Routine? = null
     private lateinit var blockAdapter: BlockAdapter
+    private var routineIndex: Int = -1
+    private lateinit var spinnerWeeks: Spinner
+    private lateinit var recyclerView: RecyclerView
+
+    // Haz que el callback sea propiedad de la clase
+    private val onBlockLongClick: (com.example.my_track_fit.model.Block, Int) -> Unit = { block, position ->
+        val selectedWeekIndex = spinnerWeeks.selectedItemPosition
+        val week = routine?.getWeeks()?.getOrNull(selectedWeekIndex)
+        val context = requireContext()
+        val options = arrayOf("Cambiar nombre", "Eliminar bloque")
+        AlertDialog.Builder(context)
+            .setTitle("Opciones de bloque")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        val editText = EditText(context)
+                        editText.setText(block.getName())
+                        AlertDialog.Builder(context)
+                            .setTitle("Cambiar nombre del bloque")
+                            .setView(editText)
+                            .setPositiveButton("Aceptar") { _, _ ->
+                                val newName = editText.text.toString().trim()
+                                if (newName.isNotEmpty()) {
+                                    block.setName(newName)
+                                    updateBlocksForSelectedWeek()
+                                } else {
+                                    Toast.makeText(context, "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            .setNegativeButton("Cancelar", null)
+                            .show()
+                    }
+                    1 -> {
+                        AlertDialog.Builder(context)
+                            .setTitle("Eliminar bloque")
+                            .setMessage("¿Realmente quieres borrar el bloque \"${block.getName()}\"?")
+                            .setPositiveButton("Aceptar") { _, _ ->
+                                week?.deleteBlock(block)
+                                updateBlocksForSelectedWeek()
+                            }
+                            .setNegativeButton("Cancelar", null)
+                            .show()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun updateBlocksForSelectedWeek() {
+        val selectedWeekIndex = spinnerWeeks.selectedItemPosition
+        val week = routine?.getWeeks()?.getOrNull(selectedWeekIndex)
+        blockAdapter = BlockAdapter(
+            week?.getBlockList() ?: listOf(),
+            routineIndex,
+            selectedWeekIndex,
+            onBlockLongClick
+        )
+        recyclerView.adapter = blockAdapter
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,13 +102,13 @@ class RoutineDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val routineIndex = arguments?.getInt(ARG_ROUTINE_INDEX) ?: -1
+        routineIndex = arguments?.getInt(ARG_ROUTINE_INDEX) ?: -1
         val workout = (activity as? MainActivity)?.workout
         routine = workout?.getRoutines()?.getOrNull(routineIndex)
 
         val tvRoutineName = view.findViewById<TextView>(R.id.tvRoutineName)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.blocksRecyclerView)
-        val spinnerWeeks = view.findViewById<Spinner>(R.id.spinnerWeeks)
+        recyclerView = view.findViewById(R.id.blocksRecyclerView)
+        spinnerWeeks = view.findViewById(R.id.spinnerWeeks)
         val btnAddWeek = view.findViewById<Button>(R.id.btnAddWeek)
         val btnAddBlock = view.findViewById<Button>(R.id.btnAddBlock)
 
@@ -65,16 +124,6 @@ class RoutineDetailFragment : Fragment() {
         )
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = blockAdapter
-
-        fun updateBlocksForSelectedWeek() {
-            val selectedWeekIndex = spinnerWeeks.selectedItemPosition
-            val week = routine?.getWeeks()?.getOrNull(selectedWeekIndex)
-            blockAdapter = BlockAdapter(
-                week?.getBlockList() ?: listOf(),
-                routineIndex,
-                selectedWeekIndex
-            )
-        }
 
         fun updateWeeksSpinnerAndButton(selectedIndex: Int = spinnerWeeks.selectedItemPosition) {
             val weeks = routine?.getWeeks() ?: mutableListOf()
