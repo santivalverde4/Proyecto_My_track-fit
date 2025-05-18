@@ -1,17 +1,15 @@
 USE [DB_mytrackfit]
 GO
-
-/****** Object:  StoredProcedure [dbo].[sp_crear_usuario]    Script Date: 5/8/2025 1:03:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_crear_usuario]    Script Date: 5/18/2025 8:28:51 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE OR ALTER PROCEDURE [dbo].[sp_crear_usuario]
+ALTER PROCEDURE [dbo].[sp_crear_usuario]
 (
-    @inUsername VARCHAR(32),
-    @inPassword VARCHAR(32),
+    @inNombreUsuario VARCHAR(64),
+	@inCorreo VARCHAR(64),
+    @inContraseña VARCHAR(64),
     @outResultCode INT OUTPUT
 )
 AS
@@ -24,7 +22,7 @@ BEGIN
     -- Verificar si ya existe un usuario con ese nombre de usuario y contraseña
     SELECT @userId = Id
     FROM dbo.Usuario
-    WHERE Nombre_Usuario = @inUsername AND Contraseña = @inPassword;
+    WHERE Correo = @inCorreo AND Contraseña = @inContraseña;
 
     IF (@userId IS NOT NULL)
     BEGIN
@@ -36,8 +34,8 @@ BEGIN
     END
 	BEGIN TRANSACTION;
     -- Insertar nuevo usuario
-    INSERT INTO dbo.Usuario (Nombre_Usuario, Contraseña)
-    VALUES (@inUsername, @inPassword);
+    INSERT INTO dbo.Usuario (NombreUsuario, Correo, Contraseña)
+    VALUES (@inNombreUsuario, @inCorreo, @inContraseña);
 
     SET @outResultCode = 0; -- Usuario creado exitosamente
 	COMMIT;
@@ -56,6 +54,3 @@ BEGIN
 
   SET NOCOUNT OFF;
 END
-GO
-
-

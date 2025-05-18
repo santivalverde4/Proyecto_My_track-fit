@@ -7,6 +7,7 @@ import retrofit2.http.*
 
 // MODELOS
 data class LoginRequest(val Username: String, val Password: String)
+data class SignUpRequest(val Username: String, val Password: String, val Email: String)
 data class LoginResponse(val success: Boolean, val message: String, val Id: Int?)
 
 data class Bodyweight(val id: Int, val peso: Int, val fecha: String)
@@ -21,7 +22,7 @@ interface ApiService {
     fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
 
     @POST("signup")
-    fun signUpUser(@Body request: LoginRequest): Call<LoginResponse>
+    fun signUpUser(@Body request: SignUpRequest): Call<LoginResponse>
 
     // Bodyweight
     @GET("bodyweight/{userId}")

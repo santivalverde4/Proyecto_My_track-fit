@@ -17,11 +17,11 @@ const createAuthRouter = (authService) => {
     }
   });
 
-  // Endpoint para sign-up
+  // Endpoint para sign-up (ahora incluye Email)
   router.post("/signup", async (req, res) => {
-    const { Username, Password } = req.body;
+    const { Username, Password, Email } = req.body;
     try {
-      const result = await authService.signUpUser({ Username, Password });
+      const result = await authService.signUpUser({ Username, Password, Email });
       if (result.success) {
         res.status(201).json(result);
       } else {

@@ -9,12 +9,12 @@ class AuthService {
   async loginUser(credentials) {
     const { Username: username, Password: password } = credentials;
     const params = {
-      inUsername: [username, TYPES.VarChar],
-      inPassword: [password, TYPES.VarChar],
+      inNombreUsuario: [username, TYPES.VarChar],
+      inContraseña: [password, TYPES.VarChar],
     };
     try {
-      const response = await this.execute("sp_login", params, {});
-      if (response.output && response.output.outResultCode == 0) {
+      const response = await this.execute("sp_login", params, { outResultCode: TYPES.Int });
+      if (response.output && response.output.outResultCode === 0) {
         let data = response.recordset[0];
         return {
           success: true,
@@ -31,10 +31,11 @@ class AuthService {
   }
 
   async signUpUser(credentials) {
-    const { Username: username, Password: password } = credentials;
+    const { Username: username, Password: password, Email: email } = credentials;
     const params = {
-      inUsername: [username, TYPES.VarChar],
-      inPassword: [password, TYPES.VarChar],
+      inNombreUsuario: [username, TYPES.VarChar],
+      inCorreo: [email, TYPES.VarChar],
+      inContraseña: [password, TYPES.VarChar],
     };
     try {
       const response = await this.execute("sp_crear_usuario", params, { outResultCode: TYPES.Int });

@@ -1,17 +1,14 @@
 USE [DB_mytrackfit]
 GO
-
-/****** Object:  StoredProcedure [dbo].[sp_login]    Script Date: 5/8/2025 1:04:17 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_login]    Script Date: 5/18/2025 8:29:32 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE OR ALTER PROCEDURE [dbo].[sp_login]
+ALTER PROCEDURE [dbo].[sp_login]
 (
-    @inUsername VARCHAR(64),
-    @inPassword VARCHAR(64),
+    @inNombreUsuario VARCHAR(64),
+    @inContraseña VARCHAR(64),
     @outResultCode INT OUTPUT
 )
 AS
@@ -24,7 +21,7 @@ BEGIN
     -- Verificar si el usuario existe
     SELECT @userId = Id
     FROM dbo.Usuario
-    WHERE Nombre_Usuario = @inUsername;
+    WHERE NombreUsuario = @inNombreUsuario;
 
     IF (@userId IS NULL)
     BEGIN
@@ -42,7 +39,7 @@ BEGIN
     FROM dbo.Usuario
     WHERE Id = @userId;
 
-    IF (@passwordCorrecta <> @inPassword) -- contraseña distinta
+    IF (@passwordCorrecta <> @inContraseña) -- contraseña distinta
     BEGIN
 
         SET @outResultCode = 50002; -- Contraseña incorrecta
@@ -72,6 +69,3 @@ BEGIN
   END CATCH
   SET NOCOUNT OFF;
 END
-GO
-
-
