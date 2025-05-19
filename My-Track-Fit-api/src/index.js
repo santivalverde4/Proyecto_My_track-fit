@@ -161,4 +161,30 @@ app.post('/api/exercise', async (req, res) => {
   }
 });
 
+//obtener workout
+app.get('/api/workout/:id', async (req, res) => {
+  const workoutId = parseInt(req.params.id, 10);
+  try {
+    const workoutRepository = AppDataSource.getRepository('Workout');
+    // Incluye relaciones: rutinas y ejercicios
+    const workout = await workoutRepository.findOne({
+      where: { id: workoutId },
+      relations: ['routines', 'exercises']
+    });
+
+    if (!workout) {
+      return res.status(404).json({ message: 'Workout no encontrado' });
+    }
+
+    // Opcional: adapta la estructura si es necesario para el frontend
+    res.json({
+      id: workout.id,
+      routines: workout.routines || [],
+      exercises: workout.exercises || []
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener workout' });
+  }
+});
+
 app.listen(3000, () => console.log(`API corriendo en ${BASE_URL}`));
