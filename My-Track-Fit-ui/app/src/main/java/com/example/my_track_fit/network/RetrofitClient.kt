@@ -5,12 +5,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import com.example.my_track_fit.model.Exercise
 
 
 data class LoginRequest(val Username: String, val Password: String)
 
-// Define la respuesta que se recibe del backend
-data class LoginResponse(val success: Boolean, val message: String, val Id: Int?)
+data class LoginResponse(
+    val success: Boolean,
+    val message: String,
+    val Id: Int?,
+    val workoutId: Int? // <-- Agrega este campo
+)
+
+data class ExerciseResponse(val success: Boolean, val exercise: Exercise?)
+
+data class AddExerciseRequest(
+    val name: String,
+    val workoutId: Int
+)
 
 // Define las rutas del API
 interface ApiService {
@@ -19,6 +31,9 @@ interface ApiService {
 
     @POST("signup")
     fun signUpUser(@Body request: LoginRequest): Call<LoginResponse>
+
+    @POST("exercise")
+    fun addExercise(@Body request: AddExerciseRequest): Call<ExerciseResponse>
 }
 
 // Singleton para Retrofit

@@ -5,7 +5,14 @@ const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
 // TypeORM y entidad User
 const { DataSource } = require('typeorm');
-const UserEntity = require('./entity/User'); 
+const UserEntity = require('./entity/User');
+const WorkoutEntity = require('./entity/Workout');
+const RoutineEntity = require('./entity/Routine');
+const WeekEntity = require('./entity/Week');
+const BlockEntity = require('./entity/Block');
+const ExerciseEntity = require('./entity/Exercise');
+const ExerciseInstanceEntity = require('./entity/ExerciseInstance');
+
 
 
 const app = express();
@@ -23,9 +30,17 @@ const AppDataSource = new DataSource({
   password: process.env.SQL_PASSWORD,
   database: process.env.SQL_DATABASE,
   synchronize: true,
-  entities: [UserEntity],
+  entities: [
+    UserEntity,
+    WorkoutEntity,
+    RoutineEntity,
+    WeekEntity,
+    BlockEntity,
+    ExerciseEntity,
+    ExerciseInstanceEntity
+  ],
   options: {
-    encrypt: true, // true si usa SSL
+    encrypt: true,
     trustServerCertificate: true
   }
 });
@@ -40,10 +55,12 @@ AppDataSource.initialize()
 const pendingUsers = {}; // { token: { username, password } }
 
 //ENDPOINTS
+//login
 app.post('/api/login', async (req, res) => {
   const { Username, Password } = req.body;
   try {
     const userRepository = AppDataSource.getRepository('User');
+    const workoutRepository = AppDataSource.getRepository('Workout');
     const user = await userRepository.findOneBy({ username: Username, password: Password });
     if (!user) {
       return res.json({ success: false, message: 'Usuario o contraseña incorrectos' });
@@ -51,12 +68,20 @@ app.post('/api/login', async (req, res) => {
     if (!user.confirmed) {
       return res.json({ success: false, message: 'Debes confirmar tu cuenta antes de iniciar sesión' });
     }
-    res.json({ success: true, message: 'Inicio de sesión exitoso', Id: user.id });
+    // Busca el workout vinculado a este usuario
+    const workout = await workoutRepository.findOneBy({ user: { id: user.id } });
+    res.json({
+      success: true,
+      message: 'Inicio de sesión exitoso',
+      Id: user.id,
+      workoutId: workout ? workout.id : null // <-- Devuelve el workoutId
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
 });
 
+//signup
 app.post('/api/signup', (req, res) => {
   const { Username, Password } = req.body;
   const token = uuidv4();
@@ -87,24 +112,52 @@ app.post('/api/signup', (req, res) => {
   });
 });
 
+//link de confirmación
 app.get('/api/confirm/:token', async (req, res) => {
   const { token } = req.params;
   const user = pendingUsers[token];
   if (user) {
     try {
       const userRepository = AppDataSource.getRepository('User');
-      await userRepository.save({
+      const workoutRepository = AppDataSource.getRepository('Workout');
+      // 1. Crea el usuario
+      const savedUser = await userRepository.save({
         username: user.Username,
         password: user.Password, // ¡En producción, hashea la contraseña!
         confirmed: true,
       });
+      // 2. Crea el workout vinculado al usuario
+      await workoutRepository.save({
+        user: savedUser
+      });
       delete pendingUsers[token];
-      res.send('¡Cuenta confirmada y creada!');
+      res.send('¡Cuenta confirmada y workout creado!');
     } catch (err) {
-      res.status(500).send('Error guardando usuario en la base de datos');
+      res.status(500).send('Error guardando usuario o workout en la base de datos');
     }
-  } else {
+  } 
+  else {
     res.send('Token inválido o expirado');
+  }
+});
+
+//Añadir ejercicio
+app.post('/api/exercise', async (req, res) => {
+  const { name, workoutId } = req.body;
+  try {
+    const workoutRepository = AppDataSource.getRepository('Workout');
+    const exerciseRepository = AppDataSource.getRepository('Exercise');
+    const workout = await workoutRepository.findOneBy({ id: workoutId });
+    if (!workout) {
+      return res.status(404).json({ success: false, message: 'Workout no encontrado' });
+    }
+    const exercise = await exerciseRepository.save({
+      name,
+      workout
+    });
+    res.json({ success: true, exercise });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error al crear ejercicio' });
   }
 });
 

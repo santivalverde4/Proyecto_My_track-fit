@@ -11,6 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
+import com.example.my_track_fit.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import android.util.Log
+import retrofit2.Response
+import com.example.my_track_fit.network.ExerciseResponse
+import com.example.my_track_fit.network.AddExerciseRequest
 
 class WorkoutFragment : Fragment() {
     // adapter de routine
@@ -184,9 +191,28 @@ class WorkoutFragment : Fragment() {
                     .setPositiveButton("Añadir") { _, _ ->
                         val nombre = inputView.text.toString().trim()
                         if (nombre.isNotEmpty()) {
-                            workout?.addExercise(nombre)
-                            exerciseAdapter.notifyDataSetChanged()
-                        } else {
+                            // Llama a la API para guardar el ejercicio en la base de datos
+                            val sharedPref = requireActivity().getSharedPreferences("MyTrackFitPrefs", android.content.Context.MODE_PRIVATE)
+                            val workoutId = sharedPref.getInt("workoutId", -1) // Guarda el workoutId en SharedPreferences al hacer login
+                            val apiService = RetrofitClient.instance
+                            val request = AddExerciseRequest(nombre, workoutId)
+                            apiService.addExercise(request).enqueue(object : Callback<ExerciseResponse> {
+                                override fun onResponse(call: Call<ExerciseResponse>, response: Response<ExerciseResponse>) {
+                                    if (response.isSuccessful && response.body()?.success == true) {
+                                        workout?.addExercise(nombre)
+                                        exerciseAdapter.notifyDataSetChanged()
+                                    } 
+                                    else {
+                                        Toast.makeText(requireContext(), "Error al guardar en la base de datos", Toast.LENGTH_SHORT).show()
+                                        Log.e("WorkoutFragment", "Error al guardar en la base de datos: ${response.errorBody()?.string()}")
+                                    }
+                                }
+                                override fun onFailure(call: Call<ExerciseResponse>, t: Throwable) {
+                                    Toast.makeText(requireContext(), "Error de red", Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+                         else {
                             Toast.makeText(requireContext(), "Escribe un nombre", Toast.LENGTH_SHORT).show()
                         }
                     }

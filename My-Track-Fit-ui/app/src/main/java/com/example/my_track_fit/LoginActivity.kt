@@ -66,7 +66,8 @@ class LoginActivity : AppCompatActivity() {
                     with(sharedPref.edit()) {
                         putInt("userId", response.body()?.Id ?: -1)
                         putBoolean("isLoggedIn", true)
-                        putString("userEmail", username) // <-- Guarda el correo
+                        putString("userEmail", username)
+                        putInt("workoutId", response.body()?.workoutId ?: -1) // <-- Guarda el workoutId
                         apply()
                     }
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
