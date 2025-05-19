@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         val btnWorkouts = findViewById<ImageButton>(R.id.btn_workouts)
         val btnBodyWeight = findViewById<ImageButton>(R.id.btn_body_weight)
         val btnStatistics = findViewById<ImageButton>(R.id.btn_statistics)
+        val btnUserSettings = findViewById<ImageButton>(R.id.btn_user_settings)
 
         btnWorkouts.setOnClickListener {
             supportFragmentManager.commit {
@@ -43,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         btnStatistics.setOnClickListener {
             supportFragmentManager.commit {
                 replace(R.id.fragment_container, StatisticsFragment())
+            }
+        }
+
+        btnUserSettings.setOnClickListener {
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, UserSettingsFragment())
             }
         }
     }

@@ -62,11 +62,11 @@ class LoginActivity : AppCompatActivity() {
         apiService.loginUser(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
-                    // Guarda el ID del usuario o un flag de sesión
                     val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putInt("userId", response.body()?.Id ?: -1)
                         putBoolean("isLoggedIn", true)
+                        putString("userEmail", username) // <-- Guarda el correo
                         apply()
                     }
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
