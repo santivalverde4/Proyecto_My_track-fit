@@ -6,6 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.PUT
+import retrofit2.http.DELETE
 import retrofit2.http.Path
 import com.example.my_track_fit.model.Routine
 import com.example.my_track_fit.model.Exercise
@@ -32,6 +34,12 @@ data class WorkoutResponse(
     val exercises: List<Exercise>
 )
 
+data class ExercisesResponse(
+    val exercises: List<Exercise>
+)
+
+data class UpdateExerciseRequest(val name: String)
+
 // Define las rutas del API
 interface ApiService {
     @POST("login")
@@ -45,6 +53,16 @@ interface ApiService {
 
     @GET("workout/{id}")
     fun getWorkout(@Path("id") id: Int): Call<WorkoutResponse>
+
+    @GET("workout/{id}/exercises")
+    fun getExercises(@Path("id") id: Int): Call<ExercisesResponse>
+
+    @PUT("exercise/{id}")
+    fun updateExercise(@Path("id") id: Int, @Body request: UpdateExerciseRequest): Call<ExerciseResponse>
+
+    @DELETE("exercise/{id}")
+    fun deleteExercise(@Path("id") id: Int): Call<ExerciseResponse>
+
 }
 
 // Singleton para Retrofit

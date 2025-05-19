@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.my_track_fit.model.Exercise
 
 class ExerciseAdapter(
-    private val exercises: List<Exercise>,
-    private val onExerciseLongClick: (Exercise, Int) -> Unit
+    private var exercises: List<Exercise>,
+    private var onExerciseLongClick: (Exercise, Int) -> Unit
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,6 +28,15 @@ class ExerciseAdapter(
             onExerciseLongClick(exercises[position], position)
             true
         }
+    }
+
+    fun updateList(newExercises: List<Exercise>) {
+        exercises = newExercises
+        notifyDataSetChanged()
+    }
+
+    fun setOnExerciseLongClick(callback: (Exercise, Int) -> Unit) {
+        onExerciseLongClick = callback
     }
 
     override fun getItemCount(): Int = exercises.size

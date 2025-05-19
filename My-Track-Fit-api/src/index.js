@@ -187,4 +187,52 @@ app.get('/api/workout/:id', async (req, res) => {
   }
 });
 
+// Obtener solo los ejercicios de un workout
+app.get('/api/workout/:id/exercises', async (req, res) => {
+  const workoutId = parseInt(req.params.id, 10);
+  try {
+    const exerciseRepository = AppDataSource.getRepository('Exercise');
+    const exercises = await exerciseRepository.find({
+      where: { workout: { id: workoutId } }
+    });
+    res.json({ exercises });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener ejercicios' });
+  }
+});
+
+//Cambiar nombre de ejercicio
+app.put('/api/exercise/:id', async (req, res) => {
+  const exerciseId = parseInt(req.params.id, 10);
+  const { name } = req.body;
+  try {
+    const exerciseRepository = AppDataSource.getRepository('Exercise');
+    const exercise = await exerciseRepository.findOneBy({ id: exerciseId });
+    if (!exercise) {
+      return res.status(404).json({ success: false, message: 'Ejercicio no encontrado' });
+    }
+    exercise.name = name;
+    await exerciseRepository.save(exercise);
+    res.json({ success: true, exercise });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error al actualizar ejercicio' });
+  }
+});
+
+//eliminar ejercicio
+app.delete('/api/exercise/:id', async (req, res) => {
+  const exerciseId = parseInt(req.params.id, 10);
+  try {
+    const exerciseRepository = AppDataSource.getRepository('Exercise');
+    const exercise = await exerciseRepository.findOneBy({ id: exerciseId });
+    if (!exercise) {
+      return res.status(404).json({ success: false, message: 'Ejercicio no encontrado' });
+    }
+    await exerciseRepository.remove(exercise);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error al eliminar ejercicio' });
+  }
+});
+
 app.listen(3000, () => console.log(`API corriendo en ${BASE_URL}`));
