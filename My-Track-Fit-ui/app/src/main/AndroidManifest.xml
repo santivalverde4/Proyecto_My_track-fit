@@ -29,6 +29,8 @@
 
         <!-- Registro -->
         <activity android:name=".SignUpActivity" />
+        <!-- Main -->
+        <activity android:name=".MainActivity" />
 
         <!-- Pantalla principal después de login -->
         <activity android:name=".MainActivity" />

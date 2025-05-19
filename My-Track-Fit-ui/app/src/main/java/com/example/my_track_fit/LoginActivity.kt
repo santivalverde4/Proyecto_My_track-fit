@@ -24,10 +24,19 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Verificar si ya hay sesión iniciada
+        val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
+        if (sharedPref.getBoolean("isLoggedIn", false)) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         // Vincular los elementos de la interfaz
-        val usernameEditText = findViewById<EditText>(R.id.etUsername)
+        val usernameEditText = findViewById<EditText>(R.id.etMail)
         val passwordEditText = findViewById<EditText>(R.id.etPassword)
         val loginButton = findViewById<Button>(R.id.btnLogin)
         val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp)
@@ -64,6 +73,14 @@ class LoginActivity : AppCompatActivity() {
         apiService.loginUser(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
+                    val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putInt("userId", response.body()?.Id ?: -1)
+                        putBoolean("isLoggedIn", true)
+                        putString("userEmail", username)
+                        putInt("workoutId", response.body()?.workoutId ?: -1) // <-- Guarda el workoutId
+                        apply()
+                    }
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     // Guarda el userId usando UserSession
                     val userId = response.body()?.Id ?: -1
@@ -71,7 +88,8 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                } else {
+                } 
+                else {
                     Toast.makeText(this@LoginActivity, "Error: "+(response.body()?.message ?: "Error desconocido"), Toast.LENGTH_SHORT).show()
                 }
             }

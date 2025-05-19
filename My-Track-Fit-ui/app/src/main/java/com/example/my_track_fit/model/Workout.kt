@@ -1,16 +1,26 @@
 package com.example.my_track_fit.model
 
-abstract class Workout(
+import java.io.Serializable
+
+class Workout(
     //Attributes / constructor
     val id: Int = 0, // Data base assigns automatically the id
     private var routineList: MutableList<Routine>,
     private var exerciseList: MutableList<Exercise>
-) {
+) : Serializable { 
+
+    // Segundo constructor sin parámetros
+    constructor() : this(
+        0,
+        mutableListOf<Routine>(),
+        mutableListOf<Exercise>()
+    )
+
     //Methods
     fun addRoutine(routineName: String) {
         val newRoutine = Routine(
             name = routineName,
-            blockList = mutableListOf(),
+            weekList = mutableListOf(),
             workout = this
         )
         routineList.add(newRoutine)

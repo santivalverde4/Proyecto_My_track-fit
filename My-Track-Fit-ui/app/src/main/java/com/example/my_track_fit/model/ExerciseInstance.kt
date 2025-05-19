@@ -1,25 +1,33 @@
 package com.example.my_track_fit.model
+import java.io.Serializable
 
 class ExerciseInstance(
     //val id: Int = 0, // Data base assigns automatically the id
-    private var week: Week,
+    private var block: Block,
     private var exercise: Exercise,
     private var setsData: MutableMap<Int, SetData> //Dictionary where the key is the set number
-) {
+) : Serializable {
     //Internal class to represent data for each set
     data class SetData(
         var weight: Int,
         var reps: Int,
         var rpe: Int
-    )
+    ) : Serializable
 
     //Getters & setters
-    //---week
-    fun setWeek(week: Week){
-        this.week = week
+    //---setsData
+    fun getSetsData(): MutableMap<Int, SetData> {
+        return setsData
     }
-    fun getWeek(): Week {
-        return week
+    fun setSetsData(setsData: MutableMap<Int, SetData>){
+        this.setsData = setsData
+    }
+    //---block
+    fun setBlock(block: Block){
+        this.block = block
+    }
+    fun getBlock(): Block {
+        return block
     }
     //---exercise
     fun setExercise(exercise: Exercise){
