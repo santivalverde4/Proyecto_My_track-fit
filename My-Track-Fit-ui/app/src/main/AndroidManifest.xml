@@ -19,7 +19,7 @@
 
         <!-- Login como pantalla principal -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".BodyweightActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
         <activity android:name=".MainActivity" />
 
         <!-- Bodyweight Activity -->
-        <activity android:name=".BodyweightActivity" />
+        <activity android:name=".LoginActivity" />
 
     </application>
 

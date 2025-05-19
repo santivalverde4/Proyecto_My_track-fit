@@ -27,7 +27,8 @@ class SignUpActivity : AppCompatActivity() {
         goToLoginTextView.setOnClickListener {
             finish() // Esto cierra SignUpActivity y vuelve a LoginActivity
         }
-
+        
+        // Botón de registro
         signUpButton.setOnClickListener {
             val username = usernameEditText.text.toString()
             val email = emailEditText.text.toString()
