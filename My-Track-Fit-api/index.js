@@ -6,9 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { DataSource } from 'typeorm';
 import { UserEntity } from './entity/UserEntity.js';
 import { BodyweightEntity } from './entity/BodyweightEntity.js';
-import BodyweightService from "./bodyweightService.js";
-import createBodyweightRouter from "./routes/bodyweight.js";
-
+import BodyweightService from "./pesocorporal.js";
+import createBodyweightRouter from "./routes/body.js";
 const app = express();
 app.use(cors());
 app.use(express.json());

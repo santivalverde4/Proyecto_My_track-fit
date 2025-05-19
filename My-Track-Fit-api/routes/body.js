@@ -1,7 +1,8 @@
 import express from "express";
-const router = express.Router();
 
 const createBodyweightRouter = (bodyweightService) => {
+  const router = express.Router();
+
   router.get("/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);

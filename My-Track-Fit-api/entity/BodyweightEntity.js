@@ -1,21 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { UserEntity } from "./UserEntity.js";
+import { EntitySchema } from "typeorm";
 
-@Entity()
-export class BodyweightEntity {
-  @PrimaryGeneratedColumn()
-  id;
-
-  @Column()
-  peso;
-
-  @Column()
-  fecha;
-
-  @Column()
-  userId;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: "userId" })
-  user;
-}
+export const BodyweightEntity = new EntitySchema({
+  name: "BodyweightEntity",
+  tableName: "bodyweight_entity",
+  columns: {
+    id: {
+      primary: true,
+      type: "int",
+      generated: true,
+    },
+    peso: {
+      type: "int",
+    },
+    fecha: {
+      type: "varchar",
+    },
+    userId: {
+      type: "int",
+    },
+  },
+  relations: {
+    user: {
+      type: "many-to-one",
+      target: "UserEntity",
+      joinColumn: { name: "userId" },
+      onDelete: "CASCADE",
+    },
+  },
+});
