@@ -21,15 +21,15 @@
 
     <!-- Campo de texto para el nombre de usuario -->
     <EditText
-        android:id="@+id/etUsername"
+        android:id="@+id/etMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre de usuario"
-        android:inputType="text"
-        android:drawableStart="@drawable/ic_user"
-        android:padding="12dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/edittext_background"
-        android:layout_marginBottom="16dp" />
+        android:drawableStart="@drawable/ic_user"
+        android:hint="Correo"
+        android:inputType="text"
+        android:padding="12dp" />
 
     <!-- Campo de texto para la contraseña -->
     <EditText

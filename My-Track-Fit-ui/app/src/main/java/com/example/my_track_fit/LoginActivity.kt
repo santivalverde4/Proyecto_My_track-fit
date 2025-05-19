@@ -7,7 +7,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.my_track_fit.network.ApiService
 import com.example.my_track_fit.network.LoginRequest
 import com.example.my_track_fit.network.LoginResponse
 import com.example.my_track_fit.network.RetrofitClient
@@ -19,10 +18,19 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Verificar si ya hay sesión iniciada
+        val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
+        if (sharedPref.getBoolean("isLoggedIn", false)) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         // Vincular los elementos de la interfaz
-        val usernameEditText = findViewById<EditText>(R.id.etUsername)
+        val usernameEditText = findViewById<EditText>(R.id.etMail)
         val passwordEditText = findViewById<EditText>(R.id.etPassword)
         val loginButton = findViewById<Button>(R.id.btnLogin)
         val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp) // Vincular el TextView para registro
@@ -54,11 +62,19 @@ class LoginActivity : AppCompatActivity() {
         apiService.loginUser(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
+                    // Guarda el ID del usuario o un flag de sesión
+                    val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putInt("userId", response.body()?.Id ?: -1)
+                        putBoolean("isLoggedIn", true)
+                        apply()
+                    }
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
-                    finish() // Evita que el usuario regrese al login con el botón de retroceso
-                } else {
+                    finish()
+                }
+                else {
                     Toast.makeText(this@LoginActivity, "Error: "+(response.body()?.message ?: "Error desconocido"), Toast.LENGTH_SHORT).show()
                 }
             }
