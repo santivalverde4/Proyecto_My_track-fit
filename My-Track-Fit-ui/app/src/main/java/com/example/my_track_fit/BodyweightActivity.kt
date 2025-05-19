@@ -1,5 +1,8 @@
 package com.example.my_track_fit
 
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
@@ -8,19 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.my_track_fit.databinding.ActivityBodyweightBinding
 import com.example.my_track_fit.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.my_track_fit.UserSession
 
 class BodyweightActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBodyweightBinding
     private lateinit var adapter: BodyweightAdapter
 
-    // obtener el userId desde SharedPreferences
-    private val userId: Int by lazy {
-        getSharedPreferences("my_prefs", MODE_PRIVATE).getInt("USER_ID", -1)
-    }
+    // Obtener el userId usando UserSession
+    private val userId: Int by lazy { UserSession.getUserId(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +37,7 @@ class BodyweightActivity : AppCompatActivity() {
         }
 
         // Configura RecyclerView
-        adapter = BodyweightAdapter { bodyweight ->
+        adapter = BodyweightAdapter { bodyweight: Bodyweight ->
             showBodyweightOptions(bodyweight)
         }
         binding.recyclerBodyweights.layoutManager = LinearLayoutManager(this)
@@ -179,6 +178,3 @@ class BodyweightActivity : AppCompatActivity() {
         })
     }
 }
-
-// Modelo de datos (si no lo tienes en otro archivo)
-data class Bodyweight(val id: Int, val peso: Int, val fecha: String)

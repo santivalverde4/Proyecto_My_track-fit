@@ -18,6 +18,7 @@ import retrofit2.Response
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.ImageButton
+import com.example.my_track_fit.UserSession
 
 class LoginActivity : AppCompatActivity() {
 
@@ -64,12 +65,9 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                    // Guarda el userId en SharedPreferences
+                    // Guarda el userId usando UserSession
                     val userId = response.body()?.Id ?: -1
-                    getSharedPreferences("my_prefs", MODE_PRIVATE)
-                        .edit()
-                        .putInt("USER_ID", userId)
-                        .apply()
+                    UserSession.saveUserId(this@LoginActivity, userId)
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()

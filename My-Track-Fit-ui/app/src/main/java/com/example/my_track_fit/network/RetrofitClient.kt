@@ -18,6 +18,13 @@ data class DeleteBodyweightRequest(val userId: Int)
 data class ForgotPasswordRequest(val Email: String)
 data class ForgotPasswordResponse(val success: Boolean, val message: String)
 
+
+// UpdateProfileRequest.kt
+data class UpdateProfileRequest(val Id: Int, val Username: String, val Email: String, val Password: String)
+
+// UpdateProfileResponse.kt
+data class UpdateProfileResponse(val success: Boolean, val message: String)
+
 // API SERVICE
 interface ApiService {
     // Auth
@@ -42,11 +49,14 @@ interface ApiService {
 
     @POST("forgot-password")
     fun forgotPassword(@Body request: ForgotPasswordRequest): Call<ForgotPasswordResponse>
+
+    @PUT("update-profile")
+    fun updateProfile(@Body request: UpdateProfileRequest): Call<UpdateProfileResponse>
 }
 
 // SINGLETON RETROFIT
 object RetrofitClient {
-    private const val BASE_URL = "http://10.0.2.2:3000/api/"
+    private const val BASE_URL = "http://10.0.2.2:3050/api/"
 
     val instance: ApiService by lazy {
         Retrofit.Builder()

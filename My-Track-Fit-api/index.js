@@ -1,18 +1,19 @@
 import express from "express";
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
+import sql from "mssql";
 import AuthService from "./autenticacion.js";
 import createAuthRouter from "./routes/auth.js";
-import createBodyweightRouter from "./routes/bodyweight.js"; // <-- Importa la nueva ruta
+import createBodyweightRouter from "./routes/bodyweight.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3050;
 
 app.use(express.json());
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "mssql",
   host: process.env.SQL_SERVER,
   port: Number(process.env.SQL_PORT) || 1433,
@@ -38,24 +39,23 @@ async function initConnection() {
   }
 }
 
+// NUEVA función execute usando mssql para parámetros OUTPUT
 async function execute(storedProcedure, inParams = {}, outParams = {}) {
   try {
-    const queryRunner = AppDataSource.createQueryRunner();
-    await queryRunner.connect();
+    // Conexión directa usando mssql y la config de AppDataSource
+    const pool = await sql.connect(AppDataSource.options);
+    const request = pool.request();
 
-    const inputParams = Object.keys(inParams)
-      .map((key) => `@${key} = '${inParams[key]}'`)
-      .join(", ");
-    const outputParams = Object.keys(outParams)
-      .map((key) => `@${key} OUTPUT`)
-      .join(", ");
-    const query = `EXEC ${storedProcedure} ${inputParams} ${
-      outputParams ? ", " + outputParams : ""
-    }`;
+    // Parámetros de entrada
+    for (const key in inParams) {
+      request.input(key, inParams[key][1], inParams[key][0]);
+    }
+    // Parámetros de salida
+    for (const key in outParams) {
+      request.output(key, outParams[key]);
+    }
 
-    const result = await queryRunner.query(query);
-
-    await queryRunner.release();
+    const result = await request.execute(storedProcedure);
     return result;
   } catch (error) {
     console.error("Query failed due to: " + error);
@@ -67,7 +67,6 @@ const authService = new AuthService(execute);
 const authRouter = createAuthRouter(authService);
 app.use("/api", authRouter);
 
-// Aquí agregas la nueva ruta:
 app.use("/api/bodyweight", createBodyweightRouter(execute));
 
 app.get("/", (req, res) => {

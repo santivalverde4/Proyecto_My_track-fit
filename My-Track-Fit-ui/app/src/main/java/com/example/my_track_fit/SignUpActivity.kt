@@ -3,6 +3,7 @@ package com.example.my_track_fit
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.my_track_fit.network.RetrofitClient
@@ -22,13 +23,17 @@ class SignUpActivity : AppCompatActivity() {
         val passwordEditText = findViewById<EditText>(R.id.etSignUpPassword)
         val confirmPasswordEditText = findViewById<EditText>(R.id.etConfirmPassword)
         val signUpButton = findViewById<Button>(R.id.btnSignUp)
+        val goToLoginTextView = findViewById<TextView>(R.id.tvGoToLogin)
+        goToLoginTextView.setOnClickListener {
+            finish() // Esto cierra SignUpActivity y vuelve a LoginActivity
+        }
 
         signUpButton.setOnClickListener {
             val username = usernameEditText.text.toString()
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             val confirmPassword = confirmPasswordEditText.text.toString()
-
+            
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && password == confirmPassword) {
                 signUpUser(username, email, password)
             } else {
@@ -57,3 +62,4 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 }
+

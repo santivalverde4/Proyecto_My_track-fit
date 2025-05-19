@@ -7,6 +7,10 @@ android {
     namespace = "com.example.my_track_fit"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.my_track_fit"
         minSdk = 26

@@ -44,7 +44,21 @@ const createAuthRouter = (authService) => {
   } catch (error) {
     res.status(500).json({ success: false, message: "Error interno del servidor" });
   }
-});
+  });
+
+  router.put("/update-profile", async (req, res) => {
+    const { Id, Username, Email, Password } = req.body;
+    try {
+      const result = await authService.updateProfile({ Id, Username, Email, Password });
+      if (result.success) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json({ success: false, message: result.message });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Error interno del servidor" });
+    }
+  });
 
   return router;
 };

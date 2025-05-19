@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.my_track_fit.network.Bodyweight
+import com.example.my_track_fit.UserSession
 
 class BodyweightAdapter(
     private val onItemClick: (Bodyweight) -> Unit

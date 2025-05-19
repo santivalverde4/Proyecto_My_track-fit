@@ -68,6 +68,26 @@ class AuthService {
     }
   }
 
+  async updateProfile({ Id, Username, Email, Password }) {
+    const params = {
+      inIdUsuario: [Id, TYPES.Int],
+      inNombreUsuario: [Username, TYPES.VarChar],
+      inCorreo: [Email, TYPES.VarChar],
+      inContraseña: [Password, TYPES.VarChar],
+    };
+    try {
+      const response = await this.execute("sp_actualizar_usuario", params, { outResultCode: TYPES.Int });
+      if (response.output && response.output.outResultCode === 0) {
+        return { success: true, message: "Perfil actualizado correctamente." };
+      } else {
+        return { success: false, message: "No se pudo actualizar el perfil." };
+      }
+    } catch (error) {
+      console.error("Error details:", error);
+      return { success: false, message: "Error al actualizar el perfil." };
+    }
+  }
+
 }
 
 export default AuthService;

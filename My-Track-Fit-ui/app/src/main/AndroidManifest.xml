@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Declaración de permisos -->
+    <!-- Permiso para acceso a internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -19,7 +19,7 @@
 
         <!-- Login como pantalla principal -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +29,12 @@
 
         <!-- Registro -->
         <activity android:name=".SignUpActivity" />
+
+        <!-- Pantalla principal después de login -->
+        <activity android:name=".MainActivity" />
+
+        <!-- Bodyweight Activity -->
+        <activity android:name=".BodyweightActivity" />
 
     </application>
 
