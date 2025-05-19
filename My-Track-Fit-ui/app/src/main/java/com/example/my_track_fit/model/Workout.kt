@@ -1,11 +1,14 @@
 package com.example.my_track_fit.model
 
+import java.io.Serializable
+
 class Workout(
     //Attributes / constructor
     val id: Int = 0, // Data base assigns automatically the id
     private var routineList: MutableList<Routine>,
     private var exerciseList: MutableList<Exercise>
-) {
+) : Serializable { 
+
     // Segundo constructor sin parámetros
     constructor() : this(
         0,

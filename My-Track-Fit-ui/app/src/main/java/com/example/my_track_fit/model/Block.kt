@@ -1,12 +1,15 @@
 package com.example.my_track_fit.model
 
+import java.io.Serializable
+
 class Block (
     //Attributes / constructor
     //val id: Int = 0, // Data base assigns automatically the id
     private var name: String,
     private var exerciseInstanceList: MutableList<ExerciseInstance>,
     private var week: Week
-){
+) : Serializable { 
+    
     //Setters & getters
     //---name
     fun setName(name: String){

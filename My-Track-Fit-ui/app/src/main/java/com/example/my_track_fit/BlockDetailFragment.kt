@@ -73,7 +73,16 @@ class BlockDetailFragment : Fragment() {
                 .show()
         }
 
-        val exerciseInstanceAdapter = ExerciseInstanceAdapter(initialInstances, onExerciseInstanceLongClick)
+        val exerciseInstanceAdapter = ExerciseInstanceAdapter(
+            initialInstances,
+            onExerciseInstanceLongClick,
+            onExerciseInstanceClick = { instance ->
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ExerciseInstanceDetailFragment.newInstance(instance))
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = exerciseInstanceAdapter
 

@@ -9,7 +9,8 @@ import com.example.my_track_fit.model.ExerciseInstance
 
 class ExerciseInstanceAdapter(
     private val exerciseInstances: MutableList<ExerciseInstance>,
-    private val onExerciseInstanceLongClick: (ExerciseInstance, Int) -> Unit
+    private val onExerciseInstanceLongClick: (ExerciseInstance, Int) -> Unit,
+    private val onExerciseInstanceClick: (ExerciseInstance) -> Unit
 ) : RecyclerView.Adapter<ExerciseInstanceAdapter.ExerciseInstanceViewHolder>() {
 
     class ExerciseInstanceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,6 +29,9 @@ class ExerciseInstanceAdapter(
         holder.itemView.setOnLongClickListener {
             onExerciseInstanceLongClick(instance, position)
             true
+        }
+        holder.itemView.setOnClickListener {
+            onExerciseInstanceClick(instance)
         }
     }
 

@@ -1,11 +1,14 @@
 package com.example.my_track_fit.model
 
+import java.io.Serializable
+
 class Week(
     //Attributes / constructor
     //val id: Int = 0, // Data base assigns automatically the id
     private var blockList: MutableList<Block>,
     private var routine: Routine
-) {
+) : Serializable { 
+    
     // Getters & setters
     //---blockList
     fun setBlockList(blockList: MutableList<Block>){
@@ -14,7 +17,6 @@ class Week(
     fun getBlockList(): MutableList<Block> {
         return blockList
     }
-
 
     //---routine
     fun getRoutine(): Routine {

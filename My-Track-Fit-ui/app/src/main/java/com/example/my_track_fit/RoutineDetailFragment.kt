@@ -71,17 +71,24 @@ class RoutineDetailFragment : Fragment() {
                             .setMessage("¿Realmente quieres borrar el bloque \"${block.getName()}\"?")
                             .setPositiveButton("Aceptar") { _, _ ->
                                 week?.deleteBlock(block)
-                                // Si la semana quedó vacía, elimínala de la rutina
+                                val weeks = routine?.getWeeks()
                                 if (week != null && week.getBlockList().isEmpty()) {
-                                    routine?.getWeeks()?.removeAt(selectedWeekIndex)
-                                    // Opcional: muestra un mensaje
-                                    Toast.makeText(context, "Semana eliminada porque no tiene bloques", Toast.LENGTH_SHORT).show()
-                                    // Actualiza el spinner y selecciona la semana anterior o la primera
-                                    updateWeeksSpinnerAndButton(
-                                        (selectedWeekIndex - 1).coerceAtLeast(0)
-                                    )
+                                    if (weeks != null && weeks.size > 1) {
+                                        weeks.removeAt(selectedWeekIndex)
+                                        Toast.makeText(context, "Semana eliminada porque no tiene bloques", Toast.LENGTH_SHORT).show()
+                                        updateWeeksSpinnerAndButton((selectedWeekIndex - 1).coerceAtLeast(0))
+                                    } else {
+                                        // Si es la única semana, solo actualiza la vista
+                                        updateBlocksForSelectedWeek()
+                                    }
                                 } else {
                                     updateBlocksForSelectedWeek()
+                                }
+                                // Si solo queda una semana y está vacía, oculta el botón "+ semana"
+                                if (weeks != null && weeks.size == 1 && weeks[0].getBlockList().isEmpty()) {
+                                    btnAddWeek.visibility = View.GONE
+                                } else {
+                                    btnAddWeek.visibility = View.VISIBLE
                                 }
                             }
                             .setNegativeButton("Cancelar", null)
