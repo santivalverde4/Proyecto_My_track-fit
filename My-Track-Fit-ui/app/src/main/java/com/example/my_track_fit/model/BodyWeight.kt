@@ -17,7 +17,7 @@ class BodyWeight(
     }
 
     //Methods
-    fun addBodyWeightMark(weight: Int) {
+    fun addBodyWeightMark(weight: Double) {
         val newMark = Mark(
             bodyWeightMark = weight,
             date = LocalDate.now()

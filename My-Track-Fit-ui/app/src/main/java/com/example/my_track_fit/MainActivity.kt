@@ -41,6 +41,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        btnBodyWeight.setOnClickListener {
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, BodyweightFragment())
+            }
+        }
+
         btnStatistics.setOnClickListener {
             supportFragmentManager.commit {
                 replace(R.id.fragment_container, StatisticsFragment())

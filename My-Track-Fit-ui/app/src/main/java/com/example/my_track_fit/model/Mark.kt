@@ -4,15 +4,15 @@ import java.time.LocalDate
 
 class Mark(
     //val id: Int = 0, // Data base assigns automatically the id
-    private var bodyWeightMark: Int,
+    private var bodyWeightMark: Double,
     private var date: LocalDate
 ) {
     //Getters & setters
-    fun getBodyWeightMark(): Int {
+    fun getBodyWeightMark(): Double {
         return bodyWeightMark
     }
 
-    fun setBodyWeightMark(newBodyWeightMark: Int) {
+    fun setBodyWeightMark(newBodyWeightMark: Double) {
         bodyWeightMark = newBodyWeightMark
     }
 
