@@ -6,7 +6,7 @@ class Routine (
     //val id: Int = 0, // Data base assigns automatically the id
     private var name: String,
     private var weekList: MutableList<Week> = mutableListOf(), // Se inicializa por defecto
-    private var workout: Workout
+    @Transient private var workout: Workout
 ) : Serializable { 
     init {
         // Si la lista está vacía, agrega una semana inicial

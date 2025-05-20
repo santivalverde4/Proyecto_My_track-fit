@@ -39,6 +39,7 @@ class SetDataAdapter(
         holder.etWeight.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 setData.weight = s?.toString()?.toIntOrNull() ?: 0
+                guardarRutinasEnArchivo(holder.itemView.context)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -46,6 +47,7 @@ class SetDataAdapter(
         holder.etReps.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 setData.reps = s?.toString()?.toIntOrNull() ?: 0
+                guardarRutinasEnArchivo(holder.itemView.context)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -53,6 +55,7 @@ class SetDataAdapter(
         holder.etRpe.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 setData.rpe = s?.toString()?.toIntOrNull() ?: 0
+                guardarRutinasEnArchivo(holder.itemView.context)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -64,4 +67,14 @@ class SetDataAdapter(
     }
 
     override fun getItemCount(): Int = setsData.size
+
+    private fun guardarRutinasEnArchivo(context: android.content.Context) {
+    val workout = (context as? MainActivity)?.workout
+    val rutinas = workout?.getRoutines() ?: listOf()
+    val gson = com.google.gson.Gson()
+    val json = gson.toJson(rutinas)
+    context.openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+        it.write(json.toByteArray())
+    }
+}
 }

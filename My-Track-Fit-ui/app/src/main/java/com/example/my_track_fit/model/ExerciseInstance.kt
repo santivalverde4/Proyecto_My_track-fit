@@ -3,7 +3,7 @@ import java.io.Serializable
 
 class ExerciseInstance(
     //val id: Int = 0, // Data base assigns automatically the id
-    private var block: Block,
+    @Transient private var block: Block,
     private var exercise: Exercise,
     private var setsData: MutableMap<Int, SetData> //Dictionary where the key is the set number
 ) : Serializable {

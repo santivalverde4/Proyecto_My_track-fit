@@ -54,7 +54,26 @@ class ExerciseInstanceDetailFragment : Fragment() {
             setsDataMap.remove(keyToRemove)
             setsDataList.removeAt(position)
             setDataAdapter.notifyItemRemoved(position)
+            // Guardar rutinas en archivo local después de eliminar un set
+            val workout = (activity as? MainActivity)?.workout
+            val rutinas = workout?.getRoutines() ?: listOf()
+            val gson = com.google.gson.Gson()
+            val json = gson.toJson(rutinas)
+            requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+                it.write(json.toByteArray())
+            }
         }
+
+        // Si tienes un callback para editar campos de un set, agrega el guardado ahí también.
+        // Por ejemplo, si editas peso, reps o rpe en un método/callback, después de actualizar el set haz:
+        val workout = (activity as? MainActivity)?.workout
+        val rutinas = workout?.getRoutines() ?: listOf()
+        val gson = com.google.gson.Gson()
+        val json = gson.toJson(rutinas)
+        requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+            it.write(json.toByteArray())
+        }
+        
         setsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         setsRecyclerView.adapter = setDataAdapter
 
@@ -65,6 +84,14 @@ class ExerciseInstanceDetailFragment : Fragment() {
             setsDataMap[nextSetNumber] = newSet
             setsDataList.add(newSet)
             setDataAdapter.notifyItemInserted(setsDataList.size - 1)
+            // Guardar rutinas en archivo local después de agregar un set
+            val workout = (activity as? MainActivity)?.workout
+            val rutinas = workout?.getRoutines() ?: listOf()
+            val gson = com.google.gson.Gson()
+            val json = gson.toJson(rutinas)
+            requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+                it.write(json.toByteArray())
+            }
         }
     }
 }

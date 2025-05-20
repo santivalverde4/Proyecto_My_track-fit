@@ -6,7 +6,7 @@ class Exercise (
     //Attributes / constructor
     val id: Int = 0, // Data base assigns automatically the id
     private var name: String,
-    private var workout: Workout
+    @Transient private var workout: Workout
 ) : Serializable { 
     //Getters & setters
     //---name

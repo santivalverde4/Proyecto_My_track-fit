@@ -37,6 +37,18 @@ class RoutineDetailFragment : Fragment() {
     private lateinit var btnAddWeek: Button
     private lateinit var btnAddBlock: Button
 
+    // Guarda un string en un archivo local
+    private fun saveToFile(filename: String, data: String) {
+        requireContext().openFileOutput(filename, android.content.Context.MODE_PRIVATE).use {
+            it.write(data.toByteArray())
+        }
+    }
+
+    // Lee el contenido de un archivo local como string
+    private fun readFromFile(filename: String): String {
+        return requireContext().openFileInput(filename).bufferedReader().use { it.readText() }
+    }
+
     // Haz que el callback sea propiedad de la clase
     private val onBlockLongClick: (com.example.my_track_fit.model.Block, Int) -> Unit = { block, position ->
         val selectedWeekIndex = spinnerWeeks.selectedItemPosition
@@ -58,6 +70,12 @@ class RoutineDetailFragment : Fragment() {
                                 if (newName.isNotEmpty()) {
                                     block.setName(newName)
                                     updateBlocksForSelectedWeek()
+                                    // Guardar rutinas en archivo local después de modificar el nombre del bloque
+                                    val workout = (activity as? MainActivity)?.workout
+                                    val rutinas = workout?.getRoutines() ?: listOf()
+                                    val gson = com.google.gson.Gson()
+                                    val json = gson.toJson(rutinas)
+                                    saveToFile("rutinas.json", json)
                                 } else {
                                     Toast.makeText(context, "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
                                 }
@@ -90,6 +108,12 @@ class RoutineDetailFragment : Fragment() {
                                 } else {
                                     btnAddWeek.visibility = View.VISIBLE
                                 }
+                                // Guardar rutinas en archivo local después de eliminar el bloque
+                                val workout = (activity as? MainActivity)?.workout
+                                val rutinas = workout?.getRoutines() ?: listOf()
+                                val gson = com.google.gson.Gson()
+                                val json = gson.toJson(rutinas)
+                                saveToFile("rutinas.json", json)
                             }
                             .setNegativeButton("Cancelar", null)
                             .show()
@@ -188,6 +212,12 @@ class RoutineDetailFragment : Fragment() {
                             routine?.getWeeks()?.add(newWeek)
                             updateWeeksSpinnerAndButton((routine?.getWeeks()?.size ?: 1) - 1)
                             spinnerWeeks.setSelection((routine?.getWeeks()?.size ?: 1) - 1)
+                            // Guardar rutinas en archivo local después de agregar una semana
+                            val workout = (activity as? MainActivity)?.workout
+                            val rutinas = workout?.getRoutines() ?: listOf()
+                            val gson = com.google.gson.Gson()
+                            val json = gson.toJson(rutinas)
+                            saveToFile("rutinas.json", json)
                         }
                     }
                 }
@@ -209,9 +239,16 @@ class RoutineDetailFragment : Fragment() {
                     val week = routine?.getWeeks()?.getOrNull(selectedWeekIndex)
                     if (blockName.isNotEmpty() && week != null) {
                         week.addBlock(blockName)
-                        updateBlocksForSelectedWeek() //actualizar el recycler view
-                        updateWeeksSpinnerAndButton(spinnerWeeks.selectedItemPosition) //mostrar una el botón para añadir semanas
+                        updateBlocksForSelectedWeek()
+                        updateWeeksSpinnerAndButton(spinnerWeeks.selectedItemPosition)
                         Toast.makeText(requireContext(), "Bloque agregado", Toast.LENGTH_SHORT).show()
+                        // Guardar rutinas en archivo local después de agregar un bloque
+                        val workout = (activity as? MainActivity)?.workout
+                        val rutinas = workout?.getRoutines() ?: listOf()
+                        val gson = com.google.gson.Gson()
+                        val json = gson.toJson(rutinas)
+                        saveToFile("rutinas.json", json)
+                        // Si no puedes acceder a saveToFile, crea una función local similar aquí
                     } else {
                         Toast.makeText(requireContext(), "Debes ingresar un nombre", Toast.LENGTH_SHORT).show()
                     }

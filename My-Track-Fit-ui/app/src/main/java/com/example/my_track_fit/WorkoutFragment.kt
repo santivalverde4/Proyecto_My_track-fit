@@ -11,10 +11,24 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class WorkoutFragment : Fragment() {
     // adapter de routine
     private lateinit var adapter: RoutineAdapter
+
+    // Guarda un string en un archivo local
+    private fun saveToFile(filename: String, data: String) {
+        requireContext().openFileOutput(filename, android.content.Context.MODE_PRIVATE).use {
+            it.write(data.toByteArray())
+        }
+    }
+
+    // Lee el contenido de un archivo local como string
+    private fun readFromFile(filename: String): String {
+        return requireContext().openFileInput(filename).bufferedReader().use { it.readText() }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +42,30 @@ class WorkoutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Acceder al workout de MainActivity
         val workout = (activity as? MainActivity)?.workout
+
+        //cargar datos
+        try {
+            val json = readFromFile("ejercicios.json")
+            if (json.isNotEmpty()) {
+                val gson = Gson()
+                val type = object : com.google.gson.reflect.TypeToken<List<com.example.my_track_fit.model.Exercise>>() {}.type
+                val ejercicios: List<com.example.my_track_fit.model.Exercise> = gson.fromJson(json, type)
+                workout?.setExercises(ejercicios) // Debes tener este método en tu modelo
+            }
+        } catch (e: Exception) {
+            // El archivo no existe la primera vez, ignora el error
+        }
+        try {
+            val jsonRutinas = readFromFile("rutinas.json")
+            if (jsonRutinas.isNotEmpty()) {
+                val gson = Gson()
+                val type = object : com.google.gson.reflect.TypeToken<List<com.example.my_track_fit.model.Routine>>() {}.type
+                val rutinas: List<com.example.my_track_fit.model.Routine> = gson.fromJson(jsonRutinas, type)
+                workout?.setRoutines(rutinas.toMutableList())
+            }
+        } catch (e: Exception) {
+            // El archivo no existe la primera vez, ignora el error
+        }
     
         //funcion para detectar el long click en una rutina
         val onRoutineLongClick: (com.example.my_track_fit.model.Routine, Int) -> Unit = { routine, position ->
@@ -49,6 +87,11 @@ class WorkoutFragment : Fragment() {
                                     if (newName.isNotEmpty()) {
                                         routine.setName(newName)
                                         adapter.notifyItemChanged(position)
+                                        // Guardar rutinas en archivo local después de modificar el nombre
+                                        val rutinas = workout?.getRoutines() ?: listOf()
+                                        val gson = Gson()
+                                        val json = gson.toJson(rutinas)
+                                        saveToFile("rutinas.json", json)
                                     } else {
                                         Toast.makeText(requireContext(), "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
                                     }
@@ -63,6 +106,11 @@ class WorkoutFragment : Fragment() {
                                 .setPositiveButton("Aceptar") { _, _ ->
                                     workout?.deleteRoutine(routine)
                                     adapter.notifyDataSetChanged()
+                                    // Guardar rutinas en archivo local después de eliminar
+                                    val rutinas = workout?.getRoutines() ?: listOf()
+                                    val gson = Gson()
+                                    val json = gson.toJson(rutinas)
+                                    saveToFile("rutinas.json", json)
                                 }
                                 .setNegativeButton("Cancelar", null)
                                 .show()
@@ -110,6 +158,11 @@ class WorkoutFragment : Fragment() {
                 else {
                     workout?.addRoutine(nombre)
                     adapter.notifyDataSetChanged()
+                    // Guardar rutinas en archivo local
+                    val rutinas = workout?.getRoutines() ?: listOf()
+                    val gson = Gson()
+                    val json = gson.toJson(rutinas)
+                    saveToFile("rutinas.json", json)
                     dialog.dismiss()
                 }
             }
@@ -138,14 +191,19 @@ class WorkoutFragment : Fragment() {
                                     .setTitle("Cambiar nombre del ejercicio")
                                     .setView(inputView)
                                     .setPositiveButton("Aceptar") { _, _ ->
-                                        val newName = inputView.text.toString().trim()
-                                        if (newName.isNotEmpty()) {
-                                            exercise.setName(newName)
-                                            recyclerExercises.adapter?.notifyItemChanged(position)
-                                        } else {
-                                            Toast.makeText(requireContext(), "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
-                                        }
+                                    val newName = inputView.text.toString().trim()
+                                    if (newName.isNotEmpty()) {
+                                        exercise.setName(newName)
+                                        recyclerExercises.adapter?.notifyItemChanged(position)
+                                        // Guardar ejercicios en archivo local después de modificar el nombre
+                                        val ejercicios = workout?.getExercise() ?: listOf()
+                                        val gson = Gson()
+                                        val json = gson.toJson(ejercicios)
+                                        saveToFile("ejercicios.json", json)
+                                    } else {
+                                        Toast.makeText(requireContext(), "Debe escribir al menos un caracter", Toast.LENGTH_SHORT).show()
                                     }
+                                }
                                     .setNegativeButton("Cancelar", null)
                                     .show()
                             }
@@ -156,6 +214,11 @@ class WorkoutFragment : Fragment() {
                                     .setPositiveButton("Aceptar") { _, _ ->
                                         workout?.deleteExercise(exercise)
                                         recyclerExercises.adapter?.notifyDataSetChanged()
+                                        // Guardar ejercicios en archivo local después de eliminar
+                                        val ejercicios = workout?.getExercise() ?: listOf()
+                                        val gson = Gson()
+                                        val json = gson.toJson(ejercicios)
+                                        saveToFile("ejercicios.json", json)
                                     }
                                     .setNegativeButton("Cancelar", null)
                                     .show()
@@ -186,6 +249,11 @@ class WorkoutFragment : Fragment() {
                         if (nombre.isNotEmpty()) {
                             workout?.addExercise(nombre)
                             exerciseAdapter.notifyDataSetChanged()
+                            // Guardar ejercicios en archivo local
+                            val ejercicios = workout?.getExercise() ?: listOf()
+                            val gson = Gson()
+                            val json = gson.toJson(ejercicios)
+                            saveToFile("ejercicios.json", json)
                         } else {
                             Toast.makeText(requireContext(), "Escribe un nombre", Toast.LENGTH_SHORT).show()
                         }

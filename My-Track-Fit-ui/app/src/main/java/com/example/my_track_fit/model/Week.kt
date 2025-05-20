@@ -6,7 +6,7 @@ class Week(
     //Attributes / constructor
     //val id: Int = 0, // Data base assigns automatically the id
     private var blockList: MutableList<Block>,
-    private var routine: Routine
+    @Transient private var routine: Routine
 ) : Serializable { 
     
     // Getters & setters

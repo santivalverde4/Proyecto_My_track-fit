@@ -68,6 +68,14 @@ class BlockDetailFragment : Fragment() {
                 .setPositiveButton("Aceptar") { _, _ ->
                     block?.deleteExerciseInstance(instance)
                     recyclerView.adapter?.notifyItemRemoved(position)
+                    // Guardar rutinas en archivo local después de eliminar una instancia de ejercicio
+                    val workout = (activity as? MainActivity)?.workout
+                    val rutinas = workout?.getRoutines() ?: listOf()
+                    val gson = com.google.gson.Gson()
+                    val json = gson.toJson(rutinas)
+                    requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+                        it.write(json.toByteArray())
+                    }
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
@@ -99,6 +107,14 @@ class BlockDetailFragment : Fragment() {
                     val selectedExercise = exerciseList[which]
                     block?.addExerciseInstance(selectedExercise)
                     exerciseInstanceAdapter.notifyDataSetChanged()
+                    // Guardar rutinas en archivo local después de agregar una instancia de ejercicio
+                    val workout = (activity as? MainActivity)?.workout
+                    val rutinas = workout?.getRoutines() ?: listOf()
+                    val gson = com.google.gson.Gson()
+                    val json = gson.toJson(rutinas)
+                    requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+                        it.write(json.toByteArray())
+                    }
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()

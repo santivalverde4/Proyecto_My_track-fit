@@ -59,4 +59,9 @@ class Workout(
     fun getExercise(): MutableList<Exercise> {
         return exerciseList
     }
+
+    fun setExercises(ejercicios: List<Exercise>) {
+        this.exerciseList.clear()
+        this.exerciseList.addAll(ejercicios)
+    }
 }

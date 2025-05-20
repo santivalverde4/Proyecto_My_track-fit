@@ -7,7 +7,7 @@ class Block (
     //val id: Int = 0, // Data base assigns automatically the id
     private var name: String,
     private var exerciseInstanceList: MutableList<ExerciseInstance>,
-    private var week: Week
+    @Transient private var week: Week
 ) : Serializable { 
     
     //Setters & getters
