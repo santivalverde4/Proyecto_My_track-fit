@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.commit
+import com.example.my_track_fit.com.example.my_track_fit.StatisticsFragment
 import com.example.my_track_fit.model.Workout
 
 class MainActivity : AppCompatActivity() {
