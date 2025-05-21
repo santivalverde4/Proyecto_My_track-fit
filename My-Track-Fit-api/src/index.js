@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const BASE_URL = 'http://192.168.0.9:3000'; // Variable para la URL base
+const BASE_URL = 'http:///192.168.0.153:3000'; // Variable para la URL base
 
 // Configuración de TypeORM
 const AppDataSource = new DataSource({
