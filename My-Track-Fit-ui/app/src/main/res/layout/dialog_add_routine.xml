@@ -2,32 +2,61 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center"
+    android:elevation="4dp"
+    android:clipToPadding="false">
+
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nueva Rutina"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/etRoutineName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre de la rutina" />
+        android:hint="Nombre de la rutina"
+        android:background="@drawable/edittext_background"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="#888888"
+        android:inputType="text"
+        android:layout_marginBottom="24dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:layout_marginTop="16dp">
+        android:gravity="end">
 
         <Button
             android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Cancelar" />
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/primary"
+            android:background="@drawable/button_outline"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/btnAccept"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Aceptar"
-            android:layout_marginStart="8dp"/>
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

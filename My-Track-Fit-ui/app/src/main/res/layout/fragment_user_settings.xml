@@ -2,8 +2,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp">
+    android:gravity="center_horizontal"
+    android:padding="32dp"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/tvUserEmail"
@@ -12,32 +13,49 @@
         android:text="Correo"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_marginBottom="32dp"/>
 
     <Button
         android:id="@+id/btn_logout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cerrar sesión" />
+        android:text="Cerrar sesión"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"
+        android:layout_marginBottom="16dp"/>
 
     <Button
         android:id="@+id/btn_change_password"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cambiar contraseña"
-        android:layout_marginTop="24dp"/>
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"
+        android:layout_marginBottom="32dp"/>
 
     <Button
-        android:id="@+id/btn_load_routines_cloud"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_upload_cloud"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cargar rutinas de la nube"
-        android:layout_marginTop="32dp"/>
+        android:text="Subir a la nube"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"
+        android:layout_marginBottom="16dp"/>
 
     <Button
-        android:id="@+id/btn_download_routines_cloud"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_download_cloud"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Descargar rutinas de la nube"
-        android:layout_marginTop="16dp"/>
+        android:text="Descargar de la nube"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"/>
 </LinearLayout>

@@ -2,19 +2,24 @@ const { EntitySchema } = require("typeorm");
 
 module.exports = new EntitySchema({
   name: "User",
-  tableName: "users",
+  tableName: "Usuario",
   columns: {
-    id: {
+    Id: {
       primary: true,
       type: "int",
       generated: true,
     },
-    username: {
+    NombreUsuario: {
       type: "varchar",
-      unique: true,
+      length: 64,
     },
-    password: {
+    Contraseña: {
       type: "varchar",
+      length: 64,
+    },
+    Correo: {
+      type: "varchar",
+      length: 256,
     },
     confirmed: {
       type: "bit", 
