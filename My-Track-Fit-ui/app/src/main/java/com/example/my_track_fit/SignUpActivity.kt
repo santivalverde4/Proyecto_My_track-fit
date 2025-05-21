@@ -17,6 +17,17 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SignUpActivity : AppCompatActivity() {
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$".toRegex()
+        return email.matches(emailRegex)
+    }
+
+    private fun isValidPassword(password: String): Boolean {
+        // Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
+        val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$".toRegex()
+        return password.matches(passwordRegex)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
@@ -32,10 +43,31 @@ class SignUpActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString()
             val confirmPassword = confirmPasswordEditText.text.toString()
 
-            if (username.isNotEmpty() && password.isNotEmpty() && password == confirmPassword) {
-                signUpUser(username, password)
-            } else {
-                Toast.makeText(this, "Por favor, completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
+            when {
+                !isValidEmail(username) -> {
+                    androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Correo no válido")
+                        .setMessage("Por favor ingresa un correo electrónico válido.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+                !isValidPassword(password) -> {
+                    androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Contraseña insegura")
+                        .setMessage("Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+                password != confirmPassword -> {
+                    androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Contraseñas no coinciden")
+                        .setMessage("Las contraseñas ingresadas no son iguales.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+                else -> {
+                    signUpUser(username, password)
+                }
             }
         }
         // Agrega este bloque para cambiar a LoginActivity

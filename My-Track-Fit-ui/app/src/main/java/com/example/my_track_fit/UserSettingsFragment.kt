@@ -8,11 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import android.widget.Toast
-import java.io.File
-import okhttp3.*
-import org.json.JSONObject
-import java.io.IOException
+import android.util.Log
 
 class UserSettingsFragment : Fragment() {
     private val client = OkHttpClient()
@@ -46,96 +42,29 @@ class UserSettingsFragment : Fragment() {
             requireActivity().finish()
         }
 
-        val btnDownload = view.findViewById<Button>(R.id.btn_download_cloud)
-        val btnUpload = view.findViewById<Button>(R.id.btn_upload_cloud)
-
-        btnDownload.setOnClickListener {
-            downloadFilesFromCloud()
-        }
-
-        btnUpload.setOnClickListener {
-            uploadFilesToCloud()
-        }
-    }
-
-    private fun downloadFilesFromCloud() {
-        val files = listOf(
-            "bodyweight.json" to "ArchivoBody",
-            "rutinas.json" to "ArchivoRutina",
-            "ejercicios.json" to "ArchivoEjercicio"
-        )
-        val userEmail = getUserEmail()
-        val request = Request.Builder()
-            .url("$baseUrl/archivosusuario/$userEmail") // Ajusta el endpoint según tu API
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                requireActivity().runOnUiThread {
-                    Toast.makeText(context, "Error al descargar archivos", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val json = response.body()?.string()
-                    val jsonObject = JSONObject(json ?: "{}")
-                    for ((fileName, apiField) in files) {
-                        val value = jsonObject.optString(apiField, "")
-                        val file = File(requireContext().filesDir, fileName)
-                        file.writeText(value)
-                        requireActivity().runOnUiThread {
-                            Toast.makeText(context, "$fileName descargado", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
+        val btnChangePassword = view.findViewById<Button>(R.id.btn_change_password)
+        btnChangePassword.setOnClickListener {
+            // Envía petición al backend para enviar el correo de cambio de contraseña
+            val email = userEmail ?: return@setOnClickListener
+            Thread {
+                try {
+                    val url = java.net.URL("http://192.168.100.153:3000/api/request-password-reset")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.doOutput = true
+                    val json = """{"email":"$email"}"""
+                    conn.outputStream.use { it.write(json.toByteArray()) }
+                    val response = conn.inputStream.bufferedReader().readText()
                     requireActivity().runOnUiThread {
-                        Toast.makeText(context, "Error al descargar archivos", Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(requireContext(), "Correo de cambio de contraseña enviado", android.widget.Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    requireActivity().runOnUiThread {
+                        android.widget.Toast.makeText(requireContext(), "Error enviando correo", android.widget.Toast.LENGTH_LONG).show()
                     }
                 }
-            }
-        })
-    }
-
-    private fun uploadFilesToCloud() {
-        val files = listOf(
-            "bodyweight.json" to "ArchivoBody",
-            "rutinas.json" to "ArchivoRutina",
-            "ejercicios.json" to "ArchivoEjercicio"
-        )
-        val userEmail = getUserEmail()
-        val jsonBody = JSONObject()
-        jsonBody.put("Correo", userEmail)
-        for ((fileName, apiField) in files) {
-            val file = File(requireContext().filesDir, fileName)
-            jsonBody.put(apiField, if (file.exists()) file.readText() else "")
+            }.start()
         }
-        val requestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonBody.toString()
-        )
-        val request = Request.Builder()
-            .url("$baseUrl/archivosusuario/$userEmail") // Ajusta el endpoint según tu API
-            .post(requestBody)
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                requireActivity().runOnUiThread {
-                    Toast.makeText(context, "Error al subir archivos", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onResponse(call: Call, response: Response) {
-                requireActivity().runOnUiThread {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "Archivos subidos", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Error al subir archivos", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
-    }
-
-    private fun getUserEmail(): String {
-        val sharedPref = requireActivity().getSharedPreferences("MyTrackFitPrefs", android.content.Context.MODE_PRIVATE)
-        return sharedPref.getString("userEmail", "default") ?: "default"
     }
 }

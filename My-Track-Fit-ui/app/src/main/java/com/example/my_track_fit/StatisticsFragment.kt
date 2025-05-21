@@ -22,6 +22,7 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val btnBodyWeightStats = view.findViewById<Button>(R.id.btnBodyWeightStats)
+        val btnExerciseStats = view.findViewById<Button>(R.id.btnExerciseStats)
 
         btnBodyWeightStats.setOnClickListener {
             val bodyWeight = loadBodyWeightFromFile()
@@ -29,6 +30,67 @@ class StatisticsFragment : Fragment() {
                 .replace(R.id.fragment_container, BodyWeightStatsFragment(bodyWeight)) // <-- aquí el cambio
                 .addToBackStack(null)
                 .commit()
+        }
+
+        btnExerciseStats.setOnClickListener {
+            // 1. Leer rutinas desde archivo
+            val rutinas = loadRoutinesFromFile()
+            if (rutinas.isEmpty()) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Rutinas")
+                    .setMessage("No hay rutinas guardadas.")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+            // 2. Mostrar lista de rutinas
+            val rutinaNombres = rutinas.map { it.getName() }.toTypedArray()
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Selecciona una rutina")
+                .setItems(rutinaNombres) { dialog, which ->
+                    val rutinaSeleccionada = rutinas[which]
+                    // 3. Obtener ejercicios únicos de todos los bloques de la rutina
+                    val ejercicios = rutinaSeleccionada.getWeeks()
+                        .flatMap { it.getBlockList() }
+                        .flatMap { it.getExerciseInstanceList() }
+                        .map { it.getExercise().getName() }
+                        .distinct()
+                    if (ejercicios.isEmpty()) {
+                        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                            .setTitle("Ejercicios")
+                            .setMessage("No hay ejercicios en esta rutina.")
+                            .setPositiveButton("OK", null)
+                            .show()
+                    } 
+                    else {
+                        // Mostrar lista simple de ejercicios (como la de rutina)
+                        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                            .setTitle("Ejercicios de la rutina")
+                            .setItems(ejercicios.toTypedArray()) { dialog, which ->
+                                // No hacer nada al seleccionar, solo cerrar el diálogo
+                            }
+                            .setNegativeButton("Cancelar", null)
+                            .show()
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+    }
+
+    // Función para leer rutinas desde rutinas.json
+    private fun loadRoutinesFromFile(): List<com.example.my_track_fit.model.Routine> {
+        return try {
+            val json = requireContext().openFileInput("rutinas.json").bufferedReader().use { it.readText() }
+            if (json.isNotEmpty()) {
+                val gson = com.google.gson.Gson()
+                val type = object : com.google.gson.reflect.TypeToken<List<com.example.my_track_fit.model.Routine>>() {}.type
+                gson.fromJson(json, type)
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
