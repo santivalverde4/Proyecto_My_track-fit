@@ -35,6 +35,44 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.btnLogin)
         val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp) // Vincular el TextView para registro
 
+        val forgotPasswordTextView = findViewById<TextView>(R.id.tvForgotPassword)
+        forgotPasswordTextView.setOnClickListener {
+            val input = EditText(this)
+            input.hint = "Correo electrónico"
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Recuperar contraseña")
+                .setMessage("Ingresa tu correo para recibir el enlace de recuperación.")
+                .setView(input)
+                .setPositiveButton("Enviar") { _, _ ->
+                    val email = input.text.toString().trim()
+                    if (email.isNotEmpty()) {
+                        Thread {
+                            try {
+                                val url = java.net.URL("http://192.168.100.153:3000/api/request-password-reset")
+                                val conn = url.openConnection() as java.net.HttpURLConnection
+                                conn.requestMethod = "POST"
+                                conn.setRequestProperty("Content-Type", "application/json")
+                                conn.doOutput = true
+                                val json = """{"email":"$email"}"""
+                                conn.outputStream.use { it.write(json.toByteArray()) }
+                                val response = conn.inputStream.bufferedReader().readText()
+                                runOnUiThread {
+                                    Toast.makeText(this, "Correo de recuperación enviado", Toast.LENGTH_LONG).show()
+                                }
+                            } catch (e: Exception) {
+                                runOnUiThread {
+                                    Toast.makeText(this, "Error enviando correo", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }.start()
+                    } 
+                    else {
+                        Toast.makeText(this, "Por favor, ingresa tu correo", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+}
         // Configurar el botón de inicio de sesión
         loginButton.setOnClickListener {
             val username = usernameEditText.text.toString()
