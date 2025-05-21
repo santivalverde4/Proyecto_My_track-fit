@@ -75,9 +75,20 @@ app.post('/api/signup', (req, res) => {
   const confirmUrl = `${BASE_URL}/api/confirm/${token}`;
   const mailOptions = {
     from: 'mytrackfit@gmail.com',
-    to: Username, // Suponiendo que Username es el correo
+    to: Username,
     subject: 'Confirma tu cuenta',
-    text: `Haz clic en el siguiente enlace para confirmar tu cuenta: ${confirmUrl}`
+    text: `Haz clic en el siguiente enlace para confirmar tu cuenta: ${confirmUrl}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #222;">
+        <h2>¡Bienvenido a MyTrackFit!</h2>
+        <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente botón:</p>
+        <a href="${confirmUrl}" style="display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;margin:16px 0;">Confirmar cuenta</a>
+        <p>O copia y pega este enlace en tu navegador:<br>
+        <span style="color:#1976d2">${confirmUrl}</span></p>
+        <hr>
+        <small>Si no solicitaste esta cuenta, puedes ignorar este correo.</small>
+      </div>
+    `
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -129,7 +140,18 @@ app.post('/api/request-password-reset', async (req, res) => {
     from: 'mytrackfit@gmail.com',
     to: email,
     subject: 'Restablece tu contraseña',
-    text: `Haz clic en el siguiente enlace para cambiar tu contraseña: ${resetUrl}`
+    text: `Haz clic en el siguiente enlace para cambiar tu contraseña: ${resetUrl}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #222;">
+        <h2>Restablecimiento de contraseña</h2>
+        <p>Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón para continuar:</p>
+        <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;margin:16px 0;">Cambiar contraseña</a>
+        <p>O copia y pega este enlace en tu navegador:<br>
+        <span style="color:#1976d2">${resetUrl}</span></p>
+        <hr>
+        <small>Si no solicitaste este cambio, puedes ignorar este correo.</small>
+      </div>
+    `
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
