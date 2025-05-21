@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="32292cbe-5437-41e0-ad53-b29d20b621c6" name="Changes" comment="commit">
       <change beforePath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/fragment_block_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/fragment_block_detail.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/fragment_body_weight_stats.xml" beforeDir="false" afterPath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/fragment_body_weight_stats.xml" afterDir="false" />
@@ -19,6 +20,9 @@
       <change beforePath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/item_routine.xml" beforeDir="false" afterPath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/item_routine.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/item_set_data.xml" beforeDir="false" afterPath="$PROJECT_DIR$/My-Track-Fit-ui/app/src/main/res/layout/item_set_data.xml" afterDir="false" />
     </list>
+=======
+    <list default="true" id="32292cbe-5437-41e0-ad53-b29d20b621c6" name="Changes" comment="commit" />
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
