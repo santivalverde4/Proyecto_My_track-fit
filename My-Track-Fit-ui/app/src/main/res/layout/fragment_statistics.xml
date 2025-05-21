@@ -1,48 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal">
 
-    <!-- Título en la parte superior -->
     <TextView
         android:id="@+id/tvStatisticsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Estadísticas"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"/>
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="48dp"/>
 
-    <!-- Botón: Ver estadísticas de peso corporal -->
     <Button
         android:id="@+id/btnBodyWeightStats"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver estadísticas de peso corporal"
-        app:layout_constraintTop_toBottomOf="@id/tvStatisticsTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="48dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"
+        android:layout_marginBottom="24dp"/>
 
-    <!-- Botón: Ver estadísticas de ejercicios -->
     <Button
         android:id="@+id/btnExerciseStats"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver estadísticas de ejercicios"
-        app:layout_constraintTop_toBottomOf="@id/btnBodyWeightStats"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button_outline"/>
+</LinearLayout>

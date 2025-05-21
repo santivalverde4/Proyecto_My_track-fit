@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <!-- Título -->
     <TextView
@@ -11,10 +12,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Rutinas"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,9 +28,9 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="24dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/button_outline"
         app:srcCompat="@drawable/add"
-        app:tint="@color/black"
+        app:tint="@color/primary"
         app:layout_constraintTop_toTopOf="@+id/tvWorkout"
         app:layout_constraintBottom_toBottomOf="@+id/tvWorkout"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -39,6 +41,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Añadir ejercicio"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:background="@drawable/button_outline"
         android:layout_marginTop="16dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
@@ -51,6 +57,7 @@
         android:id="@+id/routinesListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/white"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
