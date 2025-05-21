@@ -10,6 +10,7 @@ import android.widget.Button
 import com.example.my_track_fit.model.BodyWeight
 import com.example.my_track_fit.BodyWeightStatsFragment
 import com.example.my_track_fit.model.Mark
+import com.example.my_track_fit.ExerciseProgressStatsFragment
 
 class StatisticsFragment : Fragment() {
     override fun onCreateView(
@@ -33,7 +34,6 @@ class StatisticsFragment : Fragment() {
         }
 
         btnExerciseStats.setOnClickListener {
-            // 1. Leer rutinas desde archivo
             val rutinas = loadRoutinesFromFile()
             if (rutinas.isEmpty()) {
                 androidx.appcompat.app.AlertDialog.Builder(requireContext())
@@ -43,16 +43,16 @@ class StatisticsFragment : Fragment() {
                     .show()
                 return@setOnClickListener
             }
-            // 2. Mostrar lista de rutinas
             val rutinaNombres = rutinas.map { it.getName() }.toTypedArray()
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Selecciona una rutina")
-                .setItems(rutinaNombres) { dialog, which ->
-                    val rutinaSeleccionada = rutinas[which]
-                    // 3. Obtener ejercicios únicos de todos los bloques de la rutina
+                .setItems(rutinaNombres) { _, rutinaIdx ->
+                    val rutinaSeleccionada = rutinas[rutinaIdx]
+                    // Obtener ejercicios únicos de todos los bloques de todas las semanas
                     val ejercicios = rutinaSeleccionada.getWeeks()
-                        .flatMap { it.getBlockList() }
-                        .flatMap { it.getExerciseInstanceList() }
+                        .flatMap { semana -> 
+                            semana.getBlockList().flatMap { it.getExerciseInstanceList() }
+                        }
                         .map { it.getExercise().getName() }
                         .distinct()
                     if (ejercicios.isEmpty()) {
@@ -61,13 +61,34 @@ class StatisticsFragment : Fragment() {
                             .setMessage("No hay ejercicios en esta rutina.")
                             .setPositiveButton("OK", null)
                             .show()
-                    } 
-                    else {
-                        // Mostrar lista simple de ejercicios (como la de rutina)
+                    } else {
                         androidx.appcompat.app.AlertDialog.Builder(requireContext())
                             .setTitle("Ejercicios de la rutina")
-                            .setItems(ejercicios.toTypedArray()) { dialog, which ->
-                                // No hacer nada al seleccionar, solo cerrar el diálogo
+                            .setItems(ejercicios.toTypedArray()) { _, ejercicioIdx ->
+                                val ejercicioSeleccionado = ejercicios[ejercicioIdx]
+                                val semanas = rutinaSeleccionada.getWeeks()
+                                val progresoPorSemana = semanas.mapIndexed { semanaIdx, semana ->
+                                    val nombreSemana = "Semana ${semanaIdx + 1}"
+                                    // Buscar todas las instancias de ese ejercicio en todos los bloques de la semana
+                                    val instancias = semana.getBlockList()
+                                        .flatMap { it.getExerciseInstanceList() }
+                                        .filter { it.getExercise().getName() == ejercicioSeleccionado }
+                                    // Sumar (peso * repeticiones) de todos los sets de todas las instancias
+                                    val progreso = instancias.sumOf { instancia ->
+                                        instancia.getSetsData().values.sumOf { set ->
+                                            (set.weight ?: 0) * (set.reps ?: 0)
+                                        }
+                                    }.toFloat()
+                                    nombreSemana to progreso
+                                }
+                                // Navegar al fragmento de gráfica
+                                parentFragmentManager.beginTransaction()
+                                    .replace(
+                                        R.id.fragment_container,
+                                        ExerciseProgressStatsFragment(ejercicioSeleccionado, progresoPorSemana)
+                                    )
+                                    .addToBackStack(null)
+                                    .commit()
                             }
                             .setNegativeButton("Cancelar", null)
                             .show()
