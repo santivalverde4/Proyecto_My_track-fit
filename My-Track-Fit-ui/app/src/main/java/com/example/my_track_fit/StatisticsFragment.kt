@@ -48,7 +48,7 @@ class StatisticsFragment : Fragment() {
                 .setTitle("Selecciona una rutina")
                 .setItems(rutinaNombres) { _, rutinaIdx ->
                     val rutinaSeleccionada = rutinas[rutinaIdx]
-                    // Obtener ejercicios únicos de todos los bloques de todas las semanas
+                    // Obtener ejercicios únicos de todos los bloques de todas las semanas 
                     val ejercicios = rutinaSeleccionada.getWeeks()
                         .flatMap { semana -> 
                             semana.getBlockList().flatMap { it.getExerciseInstanceList() }
