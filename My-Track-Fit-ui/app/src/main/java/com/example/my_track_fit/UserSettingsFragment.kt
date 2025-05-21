@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import android.util.Log
 
 class UserSettingsFragment : Fragment() {
+    private val client = OkHttpClient()
+    private val baseUrl = "http://TU_API_URL:PUERTO" // Cambia esto por tu URL real
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

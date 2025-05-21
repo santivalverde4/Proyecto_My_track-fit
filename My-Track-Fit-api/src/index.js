@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
@@ -7,12 +6,13 @@ const { v4: uuidv4 } = require('uuid');
 const { DataSource } = require('typeorm');
 const UserEntity = require('./entity/User'); 
 
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const BASE_URL = 'http://192.168.100.153:3000'; // Variable para la URL base
+const BASE_URL = 'http://192.168.0.9:3000'; // Variable para la URL base
 
 // Configuración de TypeORM
 const AppDataSource = new DataSource({
