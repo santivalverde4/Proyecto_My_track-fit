@@ -20,5 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "My-Track-Fit"
+rootProject.name = "Proyecto_My_track-fit"
 include(":app")
+project(":app").projectDir = file("My-Track-Fit-ui/app")

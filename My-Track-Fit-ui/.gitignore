@@ -20,6 +20,9 @@ bin/
 gen/
 out/
 
+# Add to .gitignore
+*/build/
+*.build/
 
 # Signing files
 .signing/
