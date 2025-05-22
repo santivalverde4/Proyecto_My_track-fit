@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
-// TypeORM y entidad User
 const { DataSource } = require('typeorm');
-const UserEntity = require('./entity/User'); 
+const UserEntity = require('./entity/User');
+const ArchivoUsuarioEntity = require('./entity/ArchivoUsuario');
+const multer = require('multer');
 
 require('dotenv').config();
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const BASE_URL = 'http:///192.168.0.153:3000'; // Variable para la URL base
+const BASE_URL = 'http:// 192.168.0.9:3000';
 
 // Configuración de TypeORM
 const AppDataSource = new DataSource({
@@ -23,9 +24,9 @@ const AppDataSource = new DataSource({
   password: process.env.SQL_PASSWORD,
   database: process.env.SQL_DATABASE,
   synchronize: true,
-  entities: [UserEntity],
+  entities: [UserEntity, ArchivoUsuarioEntity],
   options: {
-    encrypt: true, // true si usa SSL
+    encrypt: true,
     trustServerCertificate: true
   }
 });
@@ -37,10 +38,12 @@ AppDataSource.initialize()
   })
   .catch((error) => console.log(error));
 
-const pendingUsers = {}; // { token: { username, password } }
-const passwordResetTokens = {}; // { token: email }
+const pendingUsers = {};
+const passwordResetTokens = {};
 
-//ENDPOINTS
+// ========== ENDPOINTS DE USUARIO ==========
+
+// LOGIN
 app.post('/api/login', async (req, res) => {
   const { Username, Password } = req.body;
   try {
@@ -58,12 +61,12 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// SIGNUP
 app.post('/api/signup', (req, res) => {
   const { Username, Password } = req.body;
   const token = uuidv4();
   pendingUsers[token] = { Username, Password };
 
-  //transporter de nodemailer
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -99,6 +102,7 @@ app.post('/api/signup', (req, res) => {
   });
 });
 
+// CONFIRMAR CUENTA
 app.get('/api/confirm/:token', async (req, res) => {
   const { token } = req.params;
   const user = pendingUsers[token];
@@ -107,7 +111,7 @@ app.get('/api/confirm/:token', async (req, res) => {
       const userRepository = AppDataSource.getRepository('User');
       await userRepository.save({
         username: user.Username,
-        password: user.Password, // ¡En producción, hashear la contraseña!
+        password: user.Password,
         confirmed: true,
       });
       delete pendingUsers[token];
@@ -120,13 +124,12 @@ app.get('/api/confirm/:token', async (req, res) => {
   }
 });
 
-//enviar correo de cambio de contraseña
+// SOLICITAR CAMBIO DE CONTRASEÑA
 app.post('/api/request-password-reset', async (req, res) => {
   const { email } = req.body;
   const token = uuidv4();
   passwordResetTokens[token] = email;
 
-  // Configura tu transporter de nodemailer
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -162,13 +165,12 @@ app.post('/api/request-password-reset', async (req, res) => {
   });
 });
 
-//pagina de cambio de contraseña
+// FORMULARIO DE CAMBIO DE CONTRASEÑA
 app.get('/reset-password/:token', (req, res) => {
   const { token } = req.params;
   if (!passwordResetTokens[token]) {
     return res.send('Enlace inválido o expirado');
   }
-  // Página simple de cambio de contraseña
   res.send(`
     <html>
       <head>
@@ -197,7 +199,6 @@ app.get('/reset-password/:token', (req, res) => {
             var pass1 = document.getElementById('password').value;
             var pass2 = document.getElementById('password2').value;
             var error = document.getElementById('error-msg');
-            // Regex: mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
             var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$/;
             if (pass1 !== pass2) {
               error.textContent = 'Las contraseñas no coinciden';
@@ -226,7 +227,7 @@ app.get('/reset-password/:token', (req, res) => {
   `);
 });
 
-//cambio de contraseña
+// CAMBIO DE CONTRASEÑA
 app.post('/api/reset-password/:token', express.urlencoded({ extended: true }), async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -240,7 +241,7 @@ app.post('/api/reset-password/:token', express.urlencoded({ extended: true }), a
     if (!user) {
       return res.send('Usuario no encontrado');
     }
-    user.password = password; // ¡En producción, hashear la contraseña!
+    user.password = password;
     await userRepository.save(user);
     delete passwordResetTokens[token];
     res.send('Contraseña cambiada exitosamente');
@@ -249,4 +250,45 @@ app.post('/api/reset-password/:token', express.urlencoded({ extended: true }), a
   }
 });
 
-app.listen(3000, () => console.log(`API corriendo en ${BASE_URL}`));
+// ========== ENDPOINTS DE ARCHIVOS USUARIO ==========
+
+// Multer para archivos en memoria
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// Subir archivo (bodyweight.json, rutinas.json, ejercicios.json)
+app.post('/api/archivo/upload', upload.single('archivo'), async (req, res) => {
+  try {
+    const { userId, tipo } = req.body; // tipo: 'ArchivoBody', 'ArchivoRutina', 'ArchivoEjercicio'
+    if (!req.file || !userId || !tipo) {
+      return res.status(400).json({ success: false, message: 'Faltan datos' });
+    }
+    const repo = AppDataSource.getRepository('ArchivosUsuario');
+    let archivoUsuario = await repo.findOne({ where: { Usuario: userId } });
+    if (!archivoUsuario) {
+      archivoUsuario = repo.create({ Usuario: userId });
+    }
+    archivoUsuario[tipo] = req.file.buffer.toString('base64');
+    await repo.save(archivoUsuario);
+    res.json({ success: true, message: 'Archivo subido correctamente' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Descargar archivo
+app.get('/api/archivo/download/:userId/:tipo', async (req, res) => {
+  try {
+    const { userId, tipo } = req.params;
+    const repo = AppDataSource.getRepository('ArchivosUsuario');
+    const archivoUsuario = await repo.findOne({ where: { Usuario: userId } });
+    if (!archivoUsuario || !archivoUsuario[tipo]) {
+      return res.status(404).json({ message: 'Archivo no encontrado' });
+    }
+    const fileBuffer = Buffer.from(archivoUsuario[tipo], 'base64');
+    res.set('Content-Type', 'application/octet-stream');
+    res.send(fileBuffer);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
