@@ -18,7 +18,7 @@ import retrofit2.Response
 
 class SignUpActivity : AppCompatActivity() {
     private fun isValidEmail(email: String): Boolean {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$".toRegex()
+        val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&._\\-#/])[A-Za-z\\d@\$!%*?&._\\-#/]{8,}$".toRegex()
         return email.matches(emailRegex)
     }
 
