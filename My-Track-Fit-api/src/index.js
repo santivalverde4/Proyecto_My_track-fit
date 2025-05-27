@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const BASE_URL = 'http://10.0.2.2:3000'; // Variable para la URL base
+const BASE_URL = 'http://192.168.100.153:3000'; // Variable para la URL base
 
 // Configuración de TypeORM
 const AppDataSource = new DataSource({
@@ -58,45 +58,56 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.post('/api/signup', (req, res) => {
+app.post('/api/signup', async (req, res) => {
   const { Username, Password } = req.body;
-  const token = uuidv4();
-  pendingUsers[token] = { Username, Password };
-
-  //transporter de nodemailer
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'mytrackfit@gmail.com',
-      pass: 'vgcf omys twmk qwun'
+  try {
+    const userRepository = AppDataSource.getRepository('User');
+    // Verifica si el usuario ya existe
+    const existingUser = await userRepository.findOneBy({ username: Username });
+    if (existingUser) {
+      return res.json({ success: false, message: 'El correo ya está registrado.' });
     }
-  });
 
-  const confirmUrl = `${BASE_URL}/api/confirm/${token}`;
-  const mailOptions = {
-    from: 'mytrackfit@gmail.com',
-    to: Username,
-    subject: 'Confirma tu cuenta',
-    text: `Haz clic en el siguiente enlace para confirmar tu cuenta: ${confirmUrl}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; color: #222;">
-        <h2>¡Bienvenido a MyTrackFit!</h2>
-        <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente botón:</p>
-        <a href="${confirmUrl}" style="display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;margin:16px 0;">Confirmar cuenta</a>
-        <p>O copia y pega este enlace en tu navegador:<br>
-        <span style="color:#1976d2">${confirmUrl}</span></p>
-        <hr>
-        <small>Si no solicitaste esta cuenta, puedes ignorar este correo.</small>
-      </div>
-    `
-  };
+    const token = uuidv4();
+    pendingUsers[token] = { Username, Password };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.json({ success: false, message: 'Error enviando correo' });
-    }
-    res.json({ success: true, message: 'Correo de confirmación enviado' });
-  });
+    //transporter de nodemailer
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'mytrackfit@gmail.com',
+        pass: 'vgcf omys twmk qwun'
+      }
+    });
+
+    const confirmUrl = `${BASE_URL}/api/confirm/${token}`;
+    const mailOptions = {
+      from: 'mytrackfit@gmail.com',
+      to: Username,
+      subject: 'Confirma tu cuenta',
+      text: `Haz clic en el siguiente enlace para confirmar tu cuenta: ${confirmUrl}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #222;">
+          <h2>¡Bienvenido a MyTrackFit!</h2>
+          <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente botón:</p>
+          <a href="${confirmUrl}" style="display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;margin:16px 0;">Confirmar cuenta</a>
+          <p>O copia y pega este enlace en tu navegador:<br>
+          <span style="color:#1976d2">${confirmUrl}</span></p>
+          <hr>
+          <small>Si no solicitaste esta cuenta, puedes ignorar este correo.</small>
+        </div>
+      `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.json({ success: false, message: 'Error enviando correo' });
+      }
+      res.json({ success: true, message: 'Correo de confirmación enviado' });
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
 });
 
 app.get('/api/confirm/:token', async (req, res) => {

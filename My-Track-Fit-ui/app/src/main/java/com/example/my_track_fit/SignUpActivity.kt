@@ -24,7 +24,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun isValidPassword(password: String): Boolean {
         // Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
-        val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$".toRegex()
+        val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&._-])[A-Za-z\\d@\$!%*?&._-]{8,}$".toRegex()
         return password.matches(passwordRegex)
     }
 

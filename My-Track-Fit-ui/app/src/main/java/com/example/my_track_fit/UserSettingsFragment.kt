@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.google.gson.Gson
 
 class UserSettingsFragment : Fragment() {
+    val BASE_URL = "http://192.168.100.153:3000"; 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,7 +48,7 @@ class UserSettingsFragment : Fragment() {
             val email = userEmail ?: return@setOnClickListener
             Thread {
                 try {
-                    val url = java.net.URL("http://10.0.2.2:3000/api/request-password-reset")
+                    val url = java.net.URL("$BASE_URL/api/request-password-reset")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.setRequestProperty("Content-Type", "application/json")
@@ -83,7 +84,7 @@ class UserSettingsFragment : Fragment() {
                             "ArchivoEjercicio" to archivoEjercicio
                         )
                     )
-                    val url = java.net.URL("http://10.0.2.2:3000/api/upload-user-files")
+                    val url = java.net.URL("$BASE_URL/api/upload-user-files")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.setRequestProperty("Content-Type", "application/json")
@@ -107,7 +108,7 @@ class UserSettingsFragment : Fragment() {
             Thread {
                 try {
                     val email = userEmail ?: ""
-                    val url = java.net.URL("http://10.0.2.2:3000/api/download-user-files?email=$email")
+                    val url = java.net.URL("$BASE_URL/api/download-user-files?email=$email")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "GET"
                     conn.setRequestProperty("Content-Type", "application/json")

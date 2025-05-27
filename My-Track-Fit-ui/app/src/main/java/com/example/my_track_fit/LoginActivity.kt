@@ -17,6 +17,7 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val BASE_URL = "http://192.168.100.153:3000"; 
         super.onCreate(savedInstanceState)
         // Verificar si ya hay sesión iniciada
         val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
@@ -48,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
                     if (email.isNotEmpty()) {
                         Thread {
                             try {
-                                val url = java.net.URL("http://10.0.2.2:3000/api/request-password-reset")
+                                val url = java.net.URL("$BASE_URL/api/request-password-reset")
                                 val conn = url.openConnection() as java.net.HttpURLConnection
                                 conn.requestMethod = "POST"
                                 conn.setRequestProperty("Content-Type", "application/json")
