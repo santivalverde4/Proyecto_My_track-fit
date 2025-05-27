@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.util.Log
 
 class UserSettingsFragment : Fragment() {
+    val BASE_URL = "http://192.168.100.153:3000"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,7 +46,7 @@ class UserSettingsFragment : Fragment() {
             val email = userEmail ?: return@setOnClickListener
             Thread {
                 try {
-                    val url = java.net.URL("http://192.168.100.153:3000/api/request-password-reset")
+                    val url = java.net.URL("$BASE_URL/api/request-password-reset")
                     val conn = url.openConnection() as java.net.HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.setRequestProperty("Content-Type", "application/json")
