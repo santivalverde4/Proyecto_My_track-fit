@@ -209,7 +209,7 @@ app.get('/reset-password/:token', (req, res) => {
             var pass2 = document.getElementById('password2').value;
             var error = document.getElementById('error-msg');
             // Regex: mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
-            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$/;
+            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@\$!%*?&._-])[A-Za-z\d@\$!%*?&._-]{8,}$/;
             if (pass1 !== pass2) {
               error.textContent = 'Las contraseñas no coinciden';
               return false;
