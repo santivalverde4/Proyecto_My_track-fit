@@ -122,12 +122,102 @@ app.get('/api/confirm/:token', async (req, res) => {
         confirmed: true,
       });
       delete pendingUsers[token];
-      res.send('¡Cuenta confirmada y creada!');
+      // Página de éxito estilizada
+      res.send(`
+        <html>
+          <head>
+            <title>Cuenta confirmada</title>
+            <style>
+              body { background: #f7f7f7; font-family: Arial, sans-serif; }
+              .container {
+                background: #fff;
+                max-width: 400px;
+                margin: 80px auto;
+                padding: 32px 24px;
+                border-radius: 10px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+                text-align: center;
+              }
+              .icon {
+                font-size: 48px;
+                color: #43a047;
+                margin-bottom: 16px;
+              }
+              h2 { color: #1976d2; margin-bottom: 8px; }
+              p { color: #444; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="icon">✅</div>
+              <h2>¡Cuenta confirmada!</h2>
+              <p>Tu cuenta ha sido creada exitosamente.<br>Puedes iniciar sesión en la app.</p>
+            </div>
+          </body>
+        </html>
+      `);
     } catch (err) {
-      res.status(500).send('Error guardando usuario en la base de datos');
+      res.status(500).send(`
+        <html>
+          <head>
+            <title>Error</title>
+            <style>
+              body { background: #f7f7f7; font-family: Arial, sans-serif; }
+              .container {
+                background: #fff;
+                max-width: 400px;
+                margin: 80px auto;
+                padding: 32px 24px;
+                border-radius: 10px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+                text-align: center;
+              }
+              .icon { font-size: 48px; color: #d32f2f; margin-bottom: 16px; }
+              h2 { color: #d32f2f; margin-bottom: 8px; }
+              p { color: #444; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="icon">❌</div>
+              <h2>Error</h2>
+              <p>Ocurrió un error guardando el usuario en la base de datos.</p>
+            </div>
+          </body>
+        </html>
+      `);
     }
   } else {
-    res.send('Token inválido o expirado');
+    // Página de token inválido estilizada
+    res.send(`
+      <html>
+        <head>
+          <title>Token inválido</title>
+          <style>
+            body { background: #f7f7f7; font-family: Arial, sans-serif; }
+            .container {
+              background: #fff;
+              max-width: 400px;
+              margin: 80px auto;
+              padding: 32px 24px;
+              border-radius: 10px;
+              box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+              text-align: center;
+            }
+            .icon { font-size: 48px; color: #d32f2f; margin-bottom: 16px; }
+            h2 { color: #d32f2f; margin-bottom: 8px; }
+            p { color: #444; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="icon">❌</div>
+            <h2>Token inválido o expirado</h2>
+            <p>El enlace de confirmación no es válido o ya fue utilizado.</p>
+          </div>
+        </body>
+      </html>
+    `);
   }
 });
 
