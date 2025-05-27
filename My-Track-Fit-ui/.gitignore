@@ -20,9 +20,6 @@ bin/
 gen/
 out/
 
-# Add to .gitignore
-*/build/
-*.build/
 
 # Signing files
 .signing/
@@ -37,8 +34,10 @@ proguard/
 *.log
 
 # Android Studio
+/*/build/
 /*/local.properties
 /*/out
+/*/*/build
 /*/*/production
 captures/
 .navigation/

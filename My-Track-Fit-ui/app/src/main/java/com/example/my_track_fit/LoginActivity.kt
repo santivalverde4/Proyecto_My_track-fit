@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
                     if (email.isNotEmpty()) {
                         Thread {
                             try {
-                                val url = java.net.URL("http:// 192.168.0.9:3000/api/request-password-reset")
+                                val url = java.net.URL("http://192.168.100.153:3000/api/request-password-reset")
                                 val conn = url.openConnection() as java.net.HttpURLConnection
                                 conn.requestMethod = "POST"
                                 conn.setRequestProperty("Content-Type", "application/json")
