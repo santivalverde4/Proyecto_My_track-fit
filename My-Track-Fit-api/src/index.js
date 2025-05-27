@@ -5,8 +5,8 @@ const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
 // TypeORM y entidad User
 const { DataSource } = require('typeorm');
-const UserEntity = require('./entity/User'); 
-
+const UserEntity = require('./entity/User');
+const ArchivoUsuarioEntity = require('./entity/ArchivoUsuario'); // <-- IMPORTANTE
 
 const app = express();
 app.use(cors());
@@ -23,7 +23,7 @@ const AppDataSource = new DataSource({
   password: process.env.SQL_PASSWORD,
   database: process.env.SQL_DATABASE,
   synchronize: true,
-  entities: [UserEntity],
+  entities: [UserEntity, ArchivoUsuarioEntity], // <-- AGREGAR LA ENTIDAD
   options: {
     encrypt: true, // true si usa SSL
     trustServerCertificate: true
@@ -246,6 +246,61 @@ app.post('/api/reset-password/:token', express.urlencoded({ extended: true }), a
     res.send('Contraseña cambiada exitosamente');
   } catch (err) {
     res.status(500).send('Error actualizando la contraseña');
+  }
+});
+
+// ----------- ENDPOINTS PARA ARCHIVOS DE USUARIO -----------
+
+// Subir archivos del usuario
+app.post('/api/upload-user-files', async (req, res) => {
+  const { email, ArchivoBody, ArchivoRutina, ArchivoEjercicio } = req.body;
+  try {
+    const userRepository = AppDataSource.getRepository('User');
+    const archivoRepository = AppDataSource.getRepository('ArchivosUsuario');
+    const user = await userRepository.findOneBy({ username: email });
+    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+
+    // Busca si ya existe un registro de archivos para este usuario
+    let archivos = await archivoRepository.findOne({ where: { Usuario: { id: user.id } } });
+    if (!archivos) {
+      archivos = archivoRepository.create({
+        ArchivoBody,
+        ArchivoRutina,
+        ArchivoEjercicio,
+        Usuario: user
+      });
+    } else {
+      archivos.ArchivoBody = ArchivoBody;
+      archivos.ArchivoRutina = ArchivoRutina;
+      archivos.ArchivoEjercicio = ArchivoEjercicio;
+    }
+    await archivoRepository.save(archivos);
+    res.json({ success: true, message: 'Archivos guardados' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+});
+
+// Descargar archivos del usuario
+app.get('/api/download-user-files', async (req, res) => {
+  const { email } = req.query;
+  try {
+    const userRepository = AppDataSource.getRepository('User');
+    const archivoRepository = AppDataSource.getRepository('ArchivosUsuario');
+    const user = await userRepository.findOneBy({ username: email });
+    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+
+    const archivos = await archivoRepository.findOne({ where: { Usuario: { id: user.id } } });
+    if (!archivos) {
+      return res.json({ ArchivoBody: "", ArchivoRutina: "", ArchivoEjercicio: "" });
+    }
+    res.json({
+      ArchivoBody: archivos.ArchivoBody || "",
+      ArchivoRutina: archivos.ArchivoRutina || "",
+      ArchivoEjercicio: archivos.ArchivoEjercicio || ""
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
 });
 
