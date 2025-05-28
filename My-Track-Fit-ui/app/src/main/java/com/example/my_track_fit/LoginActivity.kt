@@ -17,7 +17,7 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val BASE_URL = "http://10.0.2.2:3000"; 
+        val BASE_URL = "http://192.168.100.153:3000"; 
         super.onCreate(savedInstanceState)
         // Verificar si ya hay sesión iniciada
         val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
@@ -119,7 +119,8 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-               Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
+                t.printStackTrace()
+                Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

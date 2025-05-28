@@ -13,7 +13,7 @@ import android.widget.Toast
 import com.google.gson.Gson
 
 class UserSettingsFragment : Fragment() {
-    val BASE_URL = "http://10.0.2.2:3000"; 
+    val BASE_URL = "http://192.168.100.153:3000"; 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

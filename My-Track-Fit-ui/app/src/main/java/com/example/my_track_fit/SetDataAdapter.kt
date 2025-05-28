@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_track_fit.model.ExerciseInstance
+import android.widget.ImageButton
 
 class SetDataAdapter(
     private val setsData: MutableList<ExerciseInstance.SetData>,
@@ -19,7 +20,7 @@ class SetDataAdapter(
         val etWeight: EditText = itemView.findViewById(R.id.etWeight)
         val etReps: EditText = itemView.findViewById(R.id.etReps)
         val etRpe: EditText = itemView.findViewById(R.id.etRpe)
-        val btnDeleteSet: Button? = itemView.findViewById(R.id.btnDeleteSet)
+        val btnDeleteSet: ImageButton? = itemView.findViewById(R.id.btnDeleteSet)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetDataViewHolder {

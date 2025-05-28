@@ -78,6 +78,7 @@
     android:src="@drawable/ic_delete"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:contentDescription="Eliminar set"
-    android:layout_marginStart="12dp"
-    android:tint="@color/primary"/>
+    android:layout_marginStart="30dp"
+        android:layout_marginTop="7dp"
+    android:tint="#D32F2F"/>
 </LinearLayout>
