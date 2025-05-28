@@ -3,5 +3,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#03dac6</color>
-    <color name="primary">#6200EE</color>
+    <color name="primary">#1976D2</color>
+    <color name="primaryDark">#115293</color>
+    <color name="secondary">#43A047</color>
+    <color name="background">#FFFFFF</color>
+    <color name="textPrimary">#222222</color>
+    <color name="textSecondary">#757575</color>
+    <color name="accent">#FF9800</color>
+    <color name="buttonText">#FFFFFF</color>
+    <color name="dialogBackground">#FAFAFA</color>
+    <color name="dialogShadow">#22000000</color>
 </resources>
