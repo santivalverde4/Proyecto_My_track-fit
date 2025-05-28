@@ -48,6 +48,12 @@ class UserSettingsFragment : Fragment() {
 
         val btnChangePassword = view.findViewById<Button>(R.id.btn_change_password) // Botón para cambiar contraseña
         btnChangePassword.setOnClickListener {
+            // Mostrar pantalla de carga mientras se realiza la petición
+            val progressDialog = android.app.ProgressDialog(requireContext())
+            progressDialog.setMessage("Enviando correo de cambio de contraseña...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             // Envía petición al backend para enviar el correo de cambio de contraseña
             val email = userEmail ?: return@setOnClickListener
             Thread {
@@ -61,10 +67,12 @@ class UserSettingsFragment : Fragment() {
                     conn.outputStream.use { it.write(json.toByteArray()) }
                     val response = conn.inputStream.bufferedReader().readText() // Lee la respuesta
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Correo de cambio de contraseña enviado", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Error enviando correo", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -74,6 +82,12 @@ class UserSettingsFragment : Fragment() {
         // Botón para cargar archivos a la nube
         val btnUploadFiles = view.findViewById<Button>(R.id.btn_load_routines_cloud)
         btnUploadFiles.setOnClickListener {
+            // Mostrar pantalla de carga mientras se realiza la petición
+            val progressDialog = android.app.ProgressDialog(requireContext())
+            progressDialog.setMessage("Subiendo archivos a la nube...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             Thread {
                 try {
                     val archivoBody = readFileContent("bodyweight.json") // Lee el archivo de peso corporal
@@ -96,10 +110,12 @@ class UserSettingsFragment : Fragment() {
                     conn.outputStream.use { it.write(json.toByteArray()) }
                     val response = conn.inputStream.bufferedReader().readText() // Lee la respuesta
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Archivos subidos correctamente", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Error al subir archivos", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -109,6 +125,12 @@ class UserSettingsFragment : Fragment() {
         // Botón para descargar archivos de la nube
         val btnDownloadFiles = view.findViewById<Button>(R.id.btn_download_routines_cloud)
         btnDownloadFiles.setOnClickListener {
+            // Crear y mostrar un ProgressDialog para indicar carga
+            val progressDialog = android.app.ProgressDialog(requireContext())
+            progressDialog.setMessage("Descargando archivos...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             Thread {
                 try {
                     val email = userEmail ?: ""
@@ -122,10 +144,12 @@ class UserSettingsFragment : Fragment() {
                     saveFileContent("rutinas.json", archivos.ArchivoRutina) // Guarda el archivo de rutinas
                     saveFileContent("ejercicios.json", archivos.ArchivoEjercicio) // Guarda el archivo de ejercicios
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Archivos descargados correctamente", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     requireActivity().runOnUiThread {
+                        progressDialog.dismiss() // Oculta la pantalla de carga
                         Toast.makeText(requireContext(), "Error al descargar archivos", Toast.LENGTH_LONG).show()
                     }
                 }
