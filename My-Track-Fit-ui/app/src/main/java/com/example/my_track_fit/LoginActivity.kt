@@ -1,23 +1,23 @@
 package com.example.my_track_fit
 
-import android.content.Intent
-import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.my_track_fit.network.LoginRequest
-import com.example.my_track_fit.network.LoginResponse
-import com.example.my_track_fit.network.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import android.content.Intent // Permite cambiar de actividad
+import android.os.Bundle // Para manejar el ciclo de vida de la actividad
+import android.widget.Button // Botón de UI
+import android.widget.EditText // Campo de texto editable
+import android.widget.TextView // Vista para mostrar texto
+import android.widget.Toast // Para mostrar mensajes cortos al usuario
+import androidx.appcompat.app.AppCompatActivity // Actividad base para compatibilidad
+import com.example.my_track_fit.network.LoginRequest // Modelo para petición de login
+import com.example.my_track_fit.network.LoginResponse // Modelo para respuesta de login
+import com.example.my_track_fit.network.RetrofitClient // Cliente Retrofit para llamadas HTTP
+import retrofit2.Call // Llamada HTTP
+import retrofit2.Callback // Callback para respuesta HTTP
+import retrofit2.Response // Respuesta HTTP
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val BASE_URL = "http://192.168.100.153:3000"; 
+        val BASE_URL = "http://192.168.100.153:3000"; // URL base del backend
         super.onCreate(savedInstanceState)
         // Verificar si ya hay sesión iniciada
         val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
@@ -28,15 +28,15 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_login) // Establece el layout de la actividad
 
         // Vincular los elementos de la interfaz
-        val usernameEditText = findViewById<EditText>(R.id.etMail)
-        val passwordEditText = findViewById<EditText>(R.id.etPassword)
-        val loginButton = findViewById<Button>(R.id.btnLogin)
-        val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp) // Vincular el TextView para registro
+        val usernameEditText = findViewById<EditText>(R.id.etMail) // Campo de correo
+        val passwordEditText = findViewById<EditText>(R.id.etPassword) // Campo de contraseña
+        val loginButton = findViewById<Button>(R.id.btnLogin) // Botón de login
+        val signUpTextView = findViewById<TextView>(R.id.tvGoToSignUp) // Enlace para registro
 
-        val forgotPasswordTextView = findViewById<TextView>(R.id.tvForgotPassword)
+        val forgotPasswordTextView = findViewById<TextView>(R.id.tvForgotPassword) // Enlace para recuperar contraseña
         forgotPasswordTextView.setOnClickListener {
             val input = EditText(this)
             input.hint = "Correo electrónico"
@@ -49,12 +49,12 @@ class LoginActivity : AppCompatActivity() {
                     if (email.isNotEmpty()) {
                         Thread {
                             try {
-                                val url = java.net.URL("$BASE_URL/api/request-password-reset")
+                                val url = java.net.URL("$BASE_URL/api/request-password-reset") // Endpoint para recuperar contraseña
                                 val conn = url.openConnection() as java.net.HttpURLConnection
                                 conn.requestMethod = "POST"
                                 conn.setRequestProperty("Content-Type", "application/json")
                                 conn.doOutput = true
-                                val json = """{"email":"$email"}"""
+                                val json = """{"email":"$email"}""" // JSON con el correo
                                 conn.outputStream.use { it.write(json.toByteArray()) }
                                 val response = conn.inputStream.bufferedReader().readText()
                                 runOnUiThread {
@@ -73,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
-}
+        }
         // Configurar el botón de inicio de sesión
         loginButton.setOnClickListener {
             val username = usernameEditText.text.toString()
@@ -94,18 +94,20 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Método para iniciar sesión con el backend usando Retrofit
     private fun loginUser(username: String, password: String) {
-        val apiService = RetrofitClient.instance
-        val loginRequest = LoginRequest(username, password)
+        val apiService = RetrofitClient.instance // Obtiene la instancia del servicio API
+        val loginRequest = LoginRequest(username, password) // Crea el objeto de petición
 
         apiService.loginUser(loginRequest).enqueue(object : Callback<LoginResponse> {
+            // Se ejecuta cuando se recibe una respuesta del servidor
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
                     with(sharedPref.edit()) {
-                        putInt("userId", response.body()?.Id ?: -1)
-                        putBoolean("isLoggedIn", true)
-                        putString("userEmail", username) // <-- Guarda el correo
+                        putInt("userId", response.body()?.Id ?: -1) // Guarda el id del usuario
+                        putBoolean("isLoggedIn", true) // Marca la sesión como iniciada
+                        putString("userEmail", username) // Guarda el correo del usuario
                         apply()
                     }
                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
@@ -118,6 +120,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
+            // Se ejecuta si ocurre un error de red o no hay respuesta
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 t.printStackTrace()
                 Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
