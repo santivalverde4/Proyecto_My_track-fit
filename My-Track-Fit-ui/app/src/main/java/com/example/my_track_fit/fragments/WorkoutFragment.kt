@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -11,8 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
+import com.example.my_track_fit.MainActivity
+import com.example.my_track_fit.R
+import com.example.my_track_fit.adapters.ExerciseAdapter
+import com.example.my_track_fit.adapters.RoutineAdapter
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class WorkoutFragment : Fragment() {
     // adapter de routine

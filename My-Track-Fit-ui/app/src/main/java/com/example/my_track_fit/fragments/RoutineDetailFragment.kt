@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -15,7 +15,9 @@ import com.example.my_track_fit.model.Routine
 import android.widget.Toast
 import android.widget.Spinner
 import android.widget.ArrayAdapter
-import com.example.my_track_fit.BlockAdapter
+import com.example.my_track_fit.MainActivity
+import com.example.my_track_fit.R
+import com.example.my_track_fit.adapters.BlockAdapter
 
 class RoutineDetailFragment : Fragment() {
     companion object {

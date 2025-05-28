@@ -1,5 +1,6 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.my_track_fit.MainActivity
+import com.example.my_track_fit.R
+import com.example.my_track_fit.adapters.SetDataAdapter
 import com.example.my_track_fit.model.ExerciseInstance
+import com.google.gson.Gson
 
 class ExerciseInstanceDetailFragment : Fragment() {
 
@@ -57,9 +62,9 @@ class ExerciseInstanceDetailFragment : Fragment() {
             // Guardar rutinas en archivo local después de eliminar un set
             val workout = (activity as? MainActivity)?.workout
             val rutinas = workout?.getRoutines() ?: listOf()
-            val gson = com.google.gson.Gson()
+            val gson = Gson()
             val json = gson.toJson(rutinas)
-            requireContext().openFileOutput("rutinas.json", android.content.Context.MODE_PRIVATE).use {
+            requireContext().openFileOutput("rutinas.json", Context.MODE_PRIVATE).use {
                 it.write(json.toByteArray())
             }
         }

@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.my_track_fit.R
 import com.example.my_track_fit.model.Block
 import com.example.my_track_fit.MainActivity
-import com.example.my_track_fit.BlockDetailFragment
+import com.example.my_track_fit.fragments.BlockDetailFragment
 
 class BlockAdapter(
     private var blocks: List<Block>,

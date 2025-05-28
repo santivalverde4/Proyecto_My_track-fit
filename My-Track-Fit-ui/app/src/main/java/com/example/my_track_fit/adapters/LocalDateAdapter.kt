@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.adapters
 
 import com.google.gson.*
 import java.lang.reflect.Type

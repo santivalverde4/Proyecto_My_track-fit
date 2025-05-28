@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.adapters
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_track_fit.model.ExerciseInstance
 import android.widget.ImageButton
+import com.example.my_track_fit.MainActivity
+import com.example.my_track_fit.R
 
 class SetDataAdapter(
     private val setsData: MutableList<ExerciseInstance.SetData>,
@@ -63,7 +64,11 @@ class SetDataAdapter(
         })
 
         holder.btnDeleteSet?.setOnClickListener {
-            onDeleteSet?.invoke(holder.adapterPosition)
+            val pos = holder.adapterPosition
+            if (pos != RecyclerView.NO_POSITION && pos >= 0 && pos < setsData.size) {
+                onDeleteSet?.invoke(pos)
+            }
+            // Si el índice no es válido, simplemente no hace nada
         }
     }
 

@@ -1,16 +1,15 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.my_track_fit.R
 import android.widget.Button
+import com.example.my_track_fit.R
 import com.example.my_track_fit.model.BodyWeight
-import com.example.my_track_fit.BodyWeightStatsFragment
 import com.example.my_track_fit.model.Mark
-import com.example.my_track_fit.ExerciseProgressStatsFragment
+import com.example.my_track_fit.adapters.LocalDateAdapter
 
 class StatisticsFragment : Fragment() {
     override fun onCreateView(
@@ -118,7 +117,7 @@ class StatisticsFragment : Fragment() {
     // Lee el archivo bodyweight.json y devuelve un BodyWeight
     private fun loadBodyWeightFromFile(): BodyWeight {
         val gson = com.google.gson.GsonBuilder()
-            .registerTypeAdapter(java.time.LocalDate::class.java, com.example.my_track_fit.LocalDateAdapter())
+            .registerTypeAdapter(java.time.LocalDate::class.java, LocalDateAdapter())
             .create()
         val marksList: MutableList<Mark> = try {
             val json = requireContext().openFileInput("bodyweight.json").bufferedReader().use { it.readText() }

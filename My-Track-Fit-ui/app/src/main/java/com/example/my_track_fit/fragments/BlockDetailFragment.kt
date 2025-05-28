@@ -1,4 +1,4 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,11 +9,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.my_track_fit.MainActivity
-import com.example.my_track_fit.R
 import com.example.my_track_fit.model.Block
 import android.widget.Toast
 import android.app.AlertDialog
+import com.example.my_track_fit.MainActivity
+import com.example.my_track_fit.R
+import com.example.my_track_fit.adapters.ExerciseInstanceAdapter
 
 class BlockDetailFragment : Fragment() {
     companion object {
@@ -86,7 +87,10 @@ class BlockDetailFragment : Fragment() {
             onExerciseInstanceLongClick,
             onExerciseInstanceClick = { instance ->
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, ExerciseInstanceDetailFragment.newInstance(instance))
+                    .replace(
+                        R.id.fragment_container,
+                        ExerciseInstanceDetailFragment.newInstance(instance)
+                    )
                     .addToBackStack(null)
                     .commit()
             }

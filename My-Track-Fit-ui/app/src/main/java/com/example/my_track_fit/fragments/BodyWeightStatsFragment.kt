@@ -1,10 +1,11 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.my_track_fit.R
 import com.example.my_track_fit.model.BodyWeight
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry

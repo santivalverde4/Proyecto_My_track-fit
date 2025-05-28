@@ -1,16 +1,24 @@
-package com.example.my_track_fit
+package com.example.my_track_fit.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.my_track_fit.R
+import com.example.my_track_fit.adapters.LocalDateAdapter
 import com.example.my_track_fit.model.BodyWeight
 import com.example.my_track_fit.model.Mark
+import com.google.gson.GsonBuilder
+import java.time.LocalDate
 
 class BodyweightFragment : Fragment() {
 
@@ -42,7 +50,7 @@ class BodyweightFragment : Fragment() {
 
         // Cargar marcas desde archivo local (bodyweight.json)
         val gson = com.google.gson.GsonBuilder()
-            .registerTypeAdapter(java.time.LocalDate::class.java, com.example.my_track_fit.LocalDateAdapter())
+            .registerTypeAdapter(java.time.LocalDate::class.java, LocalDateAdapter())
             .create()
         val marksList: MutableList<Mark> = try {
             val json = readFromFile("bodyweight.json")
@@ -66,7 +74,7 @@ class BodyweightFragment : Fragment() {
         adapter = MarkAdapter(bodyWeight.getBodyWeightMarks(),
             onMarkLongClick = { mark, position ->
                 val options = arrayOf("Eliminar marca", "Modificar marca")
-                android.app.AlertDialog.Builder(requireContext())
+                AlertDialog.Builder(requireContext())
                     .setTitle("Opciones de marca")
                     .setItems(options) { _, which ->
                         when (which) {
@@ -74,18 +82,18 @@ class BodyweightFragment : Fragment() {
                                 bodyWeight.deleteBodyWeightMark(mark)
                                 adapter.notifyItemRemoved(position)
                                 // Guardar después de eliminar
-                                val gson = com.google.gson.GsonBuilder()
-                                    .registerTypeAdapter(java.time.LocalDate::class.java, com.example.my_track_fit.LocalDateAdapter())
+                                val gson = GsonBuilder()
+                                    .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
                                     .create()
                                 val json = gson.toJson(bodyWeight.getBodyWeightMarks())
                                 saveToFile("bodyweight.json", json)
                             }
                             1 -> { // Modificar marca
-                                val inputView = android.widget.EditText(requireContext())
+                                val inputView = EditText(requireContext())
                                 inputView.hint = "Nuevo peso (kg)"
-                                inputView.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                                inputView.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                                 inputView.setText(mark.getBodyWeightMark().toString())
-                                android.app.AlertDialog.Builder(requireContext())
+                                AlertDialog.Builder(requireContext())
                                     .setTitle("Modificar marca de peso")
                                     .setView(inputView)
                                     .setPositiveButton("Guardar") { _, _ ->
@@ -96,13 +104,13 @@ class BodyweightFragment : Fragment() {
                                             mark.setActualDate()
                                             adapter.notifyItemChanged(position)
                                             // Guardar después de modificar
-                                            val gson = com.google.gson.GsonBuilder()
-                                                .registerTypeAdapter(java.time.LocalDate::class.java, com.example.my_track_fit.LocalDateAdapter())
+                                            val gson = GsonBuilder()
+                                                .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
                                                 .create()
                                             val json = gson.toJson(bodyWeight.getBodyWeightMarks())
                                             saveToFile("bodyweight.json", json)
                                         } else {
-                                            android.widget.Toast.makeText(requireContext(), "Ingresa un peso válido", android.widget.Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(requireContext(), "Ingresa un peso válido", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     .setNegativeButton("Cancelar", null)
@@ -133,7 +141,7 @@ class BodyweightFragment : Fragment() {
                         adapter.notifyItemInserted(bodyWeight.getBodyWeightMarks().size - 1)
                         // Guardar marcas en archivo local después de agregar una marca
                         val gson = com.google.gson.GsonBuilder()
-                            .registerTypeAdapter(java.time.LocalDate::class.java, com.example.my_track_fit.LocalDateAdapter())
+                            .registerTypeAdapter(java.time.LocalDate::class.java, LocalDateAdapter())
                             .create()
                         val json = gson.toJson(bodyWeight.getBodyWeightMarks())
                         saveToFile("bodyweight.json", json)

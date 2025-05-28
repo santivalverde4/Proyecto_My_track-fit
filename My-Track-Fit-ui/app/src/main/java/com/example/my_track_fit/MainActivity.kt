@@ -7,10 +7,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.commit
 import com.example.my_track_fit.model.Workout
-import com.example.my_track_fit.WorkoutFragment
-import com.example.my_track_fit.BodyweightFragment
-import com.example.my_track_fit.StatisticsFragment
-import com.example.my_track_fit.UserSettingsFragment
+import com.example.my_track_fit.fragments.BodyweightFragment
+import com.example.my_track_fit.fragments.StatisticsFragment
+import com.example.my_track_fit.fragments.UserSettingsFragment
+import com.example.my_track_fit.fragments.WorkoutFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var workout: Workout // <-- propiedad de clase, no variable
