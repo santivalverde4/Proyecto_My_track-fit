@@ -12,7 +12,7 @@ const app = express(); // Crea la aplicación de Express
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Permite recibir JSON en las peticiones
 
-const BASE_URL = 'http://192.168.100.153:3000'; // Variable para la URL base
+const BASE_URL = 'http://10.0.2.2:3000'; // Variable para la URL base
 
 // Configuración de TypeORM para conectarse a SQL Server
 const AppDataSource = new DataSource({

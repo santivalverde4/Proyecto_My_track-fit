@@ -8,6 +8,7 @@ import android.view.ViewGroup // Contenedor de vistas
 import android.widget.Button // Botón de UI
 import android.widget.EditText // Campo de texto editable
 import android.widget.TextView // Vista para mostrar texto
+import android.widget.ImageButton // Botón de imagen para volver
 import androidx.fragment.app.Fragment // Clase base para fragmentos
 import androidx.recyclerview.widget.LinearLayoutManager // LayoutManager para listas verticales
 import androidx.recyclerview.widget.RecyclerView // Componente para listas eficientes
@@ -19,6 +20,11 @@ import com.example.my_track_fit.MainActivity // Actividad principal
 import com.example.my_track_fit.R // Acceso a recursos (layouts, ids, etc)
 import com.example.my_track_fit.adapters.BlockAdapter // Adaptador para bloques
 
+/**
+ * Fragmento que muestra el detalle de una rutina, incluyendo su nombre,
+ * las semanas, los bloques y opciones para agregar o eliminar semanas/bloques.
+ * Incluye un botón de volver en la esquina superior derecha.
+ */
 class RoutineDetailFragment : Fragment() {
     companion object {
         private const val ARG_ROUTINE_INDEX = "routine_index" // Constante para el argumento del índice de rutina
@@ -178,6 +184,12 @@ class RoutineDetailFragment : Fragment() {
         spinnerWeeks = view.findViewById(R.id.spinnerWeeks) // Spinner para seleccionar la semana
         btnAddWeek = view.findViewById(R.id.btnAddWeek) // Botón para agregar semana
         btnAddBlock = view.findViewById(R.id.btnAddBlock) // Botón para agregar bloque
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBack) // Botón para volver atrás
+
+        // Configura el botón de volver para regresar al menú anterior
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         tvRoutineName.text = routine?.getName() ?: "" // Muestra el nombre de la rutina
 

@@ -25,6 +25,5 @@
             android:textSize="18sp"
             android:textColor="@color/textPrimary"
             android:textStyle="bold"/>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

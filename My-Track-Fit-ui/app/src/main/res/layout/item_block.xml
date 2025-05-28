@@ -25,7 +25,5 @@
             android:textSize="18sp"
             android:textColor="@color/textPrimary"
             android:textStyle="bold"/>
-
-        <!-- Puedes agregar aquí un botón o icono si lo necesitas -->
     </LinearLayout>
 </androidx.cardview.widget.CardView>

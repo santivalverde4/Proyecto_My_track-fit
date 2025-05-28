@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Nombre de rutina y botón "+" para blocks -->
+    <!-- Nombre de rutina, botón volver y botón "+" para blocks -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:gravity="end|center_vertical">
 
         <TextView
             android:id="@+id/tvRoutineName"
@@ -19,6 +20,18 @@
             android:textSize="24sp"
             android:textStyle="bold"/>
 
+        <!-- Botón de volver (flecha negra) -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Volver"
+            android:tint="@android:color/black"
+            android:layout_marginStart="8dp"/>
+
+        <!-- Botón de agregar bloque ("+" en la esquina) -->
         <Button
             android:id="@+id/btnAddBlock"
             android:layout_width="wrap_content"

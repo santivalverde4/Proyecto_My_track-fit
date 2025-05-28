@@ -17,7 +17,7 @@ import retrofit2.Response // Respuesta HTTP
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val BASE_URL = "http://192.168.100.153:3000"; // URL base del backend
+        val BASE_URL = "http://10.0.2.2:3000"; // URL base del backend
         super.onCreate(savedInstanceState)
         // Verificar si ya hay sesión iniciada
         val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)

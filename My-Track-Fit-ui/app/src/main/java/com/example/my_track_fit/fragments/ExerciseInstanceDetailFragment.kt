@@ -6,6 +6,7 @@ import android.view.LayoutInflater // Para inflar layouts XML
 import android.view.View // Clase base para todos los componentes de UI
 import android.view.ViewGroup // Contenedor de vistas
 import android.widget.Button // Botón de UI
+import android.widget.ImageButton // Botón de imagen para volver
 import android.widget.TextView // Vista para mostrar texto
 import androidx.fragment.app.Fragment // Clase base para fragmentos
 import androidx.recyclerview.widget.LinearLayoutManager // LayoutManager para listas verticales
@@ -53,6 +54,12 @@ class ExerciseInstanceDetailFragment : Fragment() {
         val tvExerciseName = view.findViewById<TextView>(R.id.tvExerciseName) // Referencia al TextView del nombre del ejercicio
         val setsRecyclerView = view.findViewById<RecyclerView>(R.id.setsRecyclerView) // RecyclerView para los sets
         val btnAddSet = view.findViewById<Button>(R.id.btnAddSet) // Botón para agregar un set
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBack) // Botón para volver al menú anterior
+
+        // Botón de volver
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         tvExerciseName.text = exerciseInstance.getExercise().getName() // Muestra el nombre del ejercicio
 
