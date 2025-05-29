@@ -14,6 +14,13 @@ import retrofit2.Call // Llamada HTTP
 import retrofit2.Callback // Callback para respuesta HTTP
 import retrofit2.Response // Respuesta HTTP
 
+// Clase para mapear la respuesta del backend al descargar archivos
+data class ArchivoUsuarioResponse(
+    val ArchivoBody: String?,
+    val ArchivoRutina: String?,
+    val ArchivoEjercicio: String?
+)
+
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
 
             // Validar los datos ingresados
             if (username.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(username, password) // Llamar al método para enviar los datos al backend
+                downloadUserFilesAndLogin(username, password) // <-- Cambia aquí
             } else {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
@@ -94,13 +101,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Método para iniciar sesión con el backend usando Retrofit
     private fun loginUser(username: String, password: String) {
         val apiService = RetrofitClient.instance // Obtiene la instancia del servicio API
         val loginRequest = LoginRequest(username, password) // Crea el objeto de petición
 
         apiService.loginUser(loginRequest).enqueue(object : Callback<LoginResponse> {
-            // Se ejecuta cuando se recibe una respuesta del servidor
+            //Se ejecuta cuando se recibe una respuesta del servidor
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     val sharedPref = getSharedPreferences("MyTrackFitPrefs", MODE_PRIVATE)
@@ -126,5 +132,51 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // Método para iniciar sesión con el backend usando Retrofit
+    private fun downloadUserFilesAndLogin(username: String, password: String) {
+        val BASE_URL = "http://192.168.100.153:3000"
+        // Mostrar un ProgressDialog mientras se descargan los datos
+        val progressDialog = android.app.ProgressDialog(this)
+        progressDialog.setMessage("Descargando datos de la nube...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        Thread {
+            try {
+                // Realizar petición GET para descargar archivos del usuario
+                val url = java.net.URL("$BASE_URL/api/download-user-files?email=$username")
+                val conn = url.openConnection() as java.net.HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("Content-Type", "application/json")
+                val response = conn.inputStream.bufferedReader().readText()
+                // Parsear la respuesta JSON a un objeto ArchivoUsuarioResponse
+                val archivos = com.google.gson.Gson().fromJson(response, ArchivoUsuarioResponse::class.java)
+                // Guardar los archivos descargados localmente
+                saveFileContent("bodyweight.json", archivos.ArchivoBody)
+                saveFileContent("rutinas.json", archivos.ArchivoRutina)
+                saveFileContent("ejercicios.json", archivos.ArchivoEjercicio)
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    // Ahora sí, intenta login
+                    loginUser(username, password)
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "Error al descargar datos de la nube", Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
+    }
+
+    // Funcion para guardar contenido en un archivo local
+    private fun saveFileContent(filename: String, content: String?) {
+        if (content == null) return
+        // Guardar el contenido en un archivo privado de la app
+        openFileOutput(filename, android.content.Context.MODE_PRIVATE).use {
+            it.write(content.toByteArray())
+        }
     }
 }

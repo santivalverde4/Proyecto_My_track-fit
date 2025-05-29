@@ -122,10 +122,19 @@ app.get('/api/confirm/:token', async (req, res) => {
   if (user) {
     try {
       const userRepository = AppDataSource.getRepository('User');
-      await userRepository.save({
+      const archivoRepository = AppDataSource.getRepository('ArchivosUsuario');
+      // Guarda el usuario y obtiene la instancia creada
+      const savedUser = await userRepository.save({
         username: user.Username,
         password: user.Password, // ¡En producción, hashear la contraseña!
         confirmed: true,
+      });
+      // Crea la instancia en ArchivosUsuario con atributos vacíos
+      await archivoRepository.save({
+        ArchivoBody: "[]",
+        ArchivoRutina: "[]",
+        ArchivoEjercicio: "[]",
+        Usuario: savedUser
       });
       delete pendingUsers[token]; // Elimina el usuario pendiente tras confirmar
       // Página de éxito estilizada
@@ -410,6 +419,26 @@ app.get('/api/download-user-files', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+});
+
+//Endpoint para eliminar la cuenta
+app.post('/api/delete-account', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const userRepository = AppDataSource.getRepository('User');
+    const archivoRepository = AppDataSource.getRepository('ArchivosUsuario');
+    const user = await userRepository.findOneBy({ username: email });
+    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+
+    // Elimina archivos asociados
+    await archivoRepository.delete({ Usuario: { id: user.id } });
+    // Elimina usuario
+    await userRepository.delete({ id: user.id });
+
+    res.json({ success: true, message: 'Cuenta eliminada' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error eliminando la cuenta' });
   }
 });
 

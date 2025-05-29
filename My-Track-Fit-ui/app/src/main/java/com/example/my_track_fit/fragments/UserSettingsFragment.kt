@@ -12,6 +12,7 @@ import android.widget.Toast // Para mostrar mensajes cortos al usuario
 import com.example.my_track_fit.LoginActivity // Actividad de login
 import com.example.my_track_fit.R // Acceso a recursos (layouts, ids, etc)
 import com.google.gson.Gson // Para serializar/deserializar JSON
+import androidx.appcompat.app.AlertDialog //dialogos de alerta
 
 class UserSettingsFragment : Fragment() {
     val BASE_URL = "http://192.168.100.153:3000"; // URL base del backend
@@ -34,16 +35,24 @@ class UserSettingsFragment : Fragment() {
 
         val btnLogout = view.findViewById<Button>(R.id.btn_logout) // Botón para cerrar sesión
         btnLogout.setOnClickListener {
-            // Borrar datos de sesión
-            with(sharedPref.edit()) {
-                clear() // Limpia todas las preferencias
-                apply() // Aplica los cambios
-            }
-            // Ir a LoginActivity y cerrar la actividad actual
-            val intent = Intent(requireActivity(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Limpia el stack de actividades
-            startActivity(intent)
-            requireActivity().finish()
+            // Mostrar diálogo de advertencia antes de cerrar sesión
+            AlertDialog.Builder(requireContext())
+                .setTitle("¿Cerrar sesión?")
+                .setMessage("Antes de cerrar sesión, asegúrate de haber cargado tu rutina a la nube.\n\nSi no lo haces, la próxima vez que inicies sesión se cargará automáticamente la rutina que esté en la nube y podrías perder cambios locales.")
+                .setPositiveButton("Cerrar sesión") { _, _ ->
+                    // Borrar datos de sesión
+                    with(sharedPref.edit()) {
+                        clear() // Limpia todas las preferencias
+                        apply() // Aplica los cambios
+                    }
+                    // Ir a LoginActivity y cerrar la actividad actual
+                    val intent = Intent(requireActivity(), LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Limpia el stack de actividades
+                    startActivity(intent)
+                    requireActivity().finish()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
 
         val btnChangePassword = view.findViewById<Button>(R.id.btn_change_password) // Botón para cambiar contraseña
@@ -154,6 +163,60 @@ class UserSettingsFragment : Fragment() {
                     }
                 }
             }.start()
+        }
+
+        // Botón para eliminar la cuenta del usuario
+        val btnDeleteAccount = view.findViewById<Button>(R.id.btn_delete_account)
+        btnDeleteAccount.setOnClickListener {
+            // Muestra un diálogo de confirmación antes de eliminar la cuenta
+            val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("¿Eliminar cuenta?")
+            .setMessage("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.")
+            .setPositiveButton("Eliminar") { _, _ ->
+                // Si el usuario confirma, procede a eliminar la cuenta
+                val email = userEmail ?: return@setPositiveButton
+                // Muestra un ProgressDialog mientras se realiza la petición
+                val progressDialog = android.app.ProgressDialog(requireContext())
+                progressDialog.setMessage("Eliminando cuenta...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+                Thread {
+                try {
+                    // Realiza una petición POST al backend para eliminar la cuenta
+                    val url = java.net.URL("$BASE_URL/api/delete-account")
+                    val conn = url.openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.doOutput = true
+                    val json = """{"email":"$email"}"""
+                    conn.outputStream.use { it.write(json.toByteArray()) }
+                    val response = conn.inputStream.bufferedReader().readText()
+                    requireActivity().runOnUiThread {
+                    progressDialog.dismiss()
+                    Toast.makeText(requireContext(), "Cuenta eliminada", Toast.LENGTH_LONG).show()
+                    // Borra los datos de sesión y regresa a la pantalla de login
+                    with(sharedPref.edit()) {
+                        clear()
+                        apply()
+                    }
+                    val intent = Intent(requireActivity(), LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    requireActivity().finish()
+                    }
+                } catch (e: Exception) {
+                    // Si ocurre un error, muestra un mensaje al usuario
+                    requireActivity().runOnUiThread {
+                    progressDialog.dismiss()
+                    Toast.makeText(requireContext(), "Error al eliminar la cuenta", Toast.LENGTH_LONG).show()
+                    }
+                }
+                }.start()
+            }
+            .setNegativeButton("Cancelar", null) // Si cancela, no hace nada
+            .create()
+            
+            dialog.show() // Muestra el diálogo de confirmación
         }
     }
 
