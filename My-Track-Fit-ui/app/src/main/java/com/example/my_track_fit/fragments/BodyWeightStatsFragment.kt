@@ -29,6 +29,10 @@ class BodyWeightStatsFragment(
     // Se llama después de que la vista ha sido creada
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val btnBack = view.findViewById<android.widget.ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
         val lineChart = view.findViewById<LineChart>(R.id.lineChart) // Referencia al gráfico de líneas
 
         // Ordena las marcas por fecha
@@ -43,7 +47,7 @@ class BodyWeightStatsFragment(
         val xLabels = marks.map { it.getDate().toString() }
 
         val dataSet = LineDataSet(entries, "Peso corporal") // Crea el conjunto de datos para el gráfico
-        dataSet.setDrawValues(true) // Muestra los valores del eje Y en los puntos
+        dataSet.setDrawValues(entries.size <= 15) // Solo muestra los valores si hay pocos puntos
         dataSet.valueTextSize = 12f // Tamaño del texto de los valores
 
         lineChart.data = LineData(dataSet) // Asigna los datos al gráfico
@@ -52,10 +56,11 @@ class BodyWeightStatsFragment(
         lineChart.xAxis.valueFormatter = IndexAxisValueFormatter(xLabels)
         lineChart.xAxis.granularity = 1f // Un valor por cada marca
         lineChart.xAxis.labelRotationAngle = -45f // Opcional: gira las etiquetas para mejor visibilidad
-        lineChart.xAxis.setLabelCount(xLabels.size, true) // Muestra todas las etiquetas
+        //lineChart.xAxis.setLabelCount(xLabels.size, true) // Muestra todas las etiquetas
 
         lineChart.axisRight.isEnabled = false // Solo muestra el eje Y izquierdo
         lineChart.description.isEnabled = false // Quita la descripción por defecto
+        lineChart.setExtraTopOffset(32f)
 
         lineChart.invalidate() // Refresca el gráfico para mostrar los datos
     }

@@ -29,6 +29,10 @@ class ExerciseProgressStatsFragment(
     // Se llama después de que la vista ha sido creada
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val btnBack = view.findViewById<android.widget.ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
         val lineChart = view.findViewById<LineChart>(R.id.lineChartExerciseProgress) // Referencia al gráfico de líneas
 
         // Prepara los datos para el gráfico (cada Entry es un punto: índice en X, valor de progreso en Y)
@@ -39,7 +43,7 @@ class ExerciseProgressStatsFragment(
         val weekLabels = progressByWeek.map { it.first }
 
         val dataSet = LineDataSet(entries, "Progreso de $exerciseName") // Crea el conjunto de datos para el gráfico
-        dataSet.setDrawValues(true) // Muestra los valores del eje Y en los puntos
+       dataSet.setDrawValues(entries.size <= 15) // Solo muestra los valores si hay pocos puntos
         dataSet.valueTextSize = 12f // Tamaño del texto de los valores
 
         lineChart.data = LineData(dataSet) // Asigna los datos al gráfico
@@ -48,10 +52,12 @@ class ExerciseProgressStatsFragment(
         lineChart.xAxis.valueFormatter = IndexAxisValueFormatter(weekLabels)
         lineChart.xAxis.granularity = 1f // Un valor por cada semana
         lineChart.xAxis.labelRotationAngle = -45f // Gira las etiquetas para mejor visibilidad
-        lineChart.xAxis.setLabelCount(weekLabels.size, true) // Muestra todas las etiquetas
+        //lineChart.xAxis.setLabelCount(weekLabels.size, true) // Muestra todas las etiquetas
 
         lineChart.axisRight.isEnabled = false // Solo muestra el eje Y izquierdo
         lineChart.description.isEnabled = false // Quita la descripción por defecto
+        lineChart.setExtraTopOffset(32f) //Aumenta el espacio en la parte superior del grafico
+        lineChart.setExtraRightOffset(32f) // Aumenta el espacio en el lado derecho
 
         lineChart.invalidate() // Refresca el gráfico para mostrar los datos
     }

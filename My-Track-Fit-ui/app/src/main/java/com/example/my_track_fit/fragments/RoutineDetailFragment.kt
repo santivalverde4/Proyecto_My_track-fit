@@ -191,7 +191,8 @@ class RoutineDetailFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        tvRoutineName.text = routine?.getName() ?: "" // Muestra el nombre de la rutina
+        //tvRoutineName.text = routine?.getName() ?: "" // Muestra el nombre de la rutina
+        tvRoutineName.text = "Entrenamientos" //muestra la palabra entrenamientos
 
         // Inicializar el RecyclerView y el adapter con los bloques de la primera semana (o lista vacía)
         val initialWeekIndex = 0

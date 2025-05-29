@@ -157,29 +157,30 @@ class BodyweightFragment : Fragment() {
     }
 }
 
-// Adapter para mostrar las marcas de peso
 class MarkAdapter(
-    private val marks: MutableList<Mark>, // Lista de marcas de peso
-    private val onMarkLongClick: ((Mark, Int) -> Unit)? = null // Callback para long click en una marca
+    private val marks: MutableList<Mark>,
+    private val onMarkLongClick: ((Mark, Int) -> Unit)? = null
 ) : RecyclerView.Adapter<MarkAdapter.MarkViewHolder>() {
     class MarkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvMark: TextView = itemView.findViewById(android.R.id.text1) // Referencia al TextView de la marca
+        val tvDate: TextView = itemView.findViewById(R.id.tvBodyWeightDate)
+        val tvValue: TextView = itemView.findViewById(R.id.tvBodyWeightValue)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarkViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false) // Infla el layout simple para cada marca
-        return MarkViewHolder(view) // Devuelve un nuevo ViewHolder
+            .inflate(R.layout.item_bodyweight, parent, false)
+        return MarkViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MarkViewHolder, position: Int) {
-        val mark = marks[position] // Obtiene la marca en la posición dada
-        holder.tvMark.text = "${mark.getBodyWeightMark()} kg - ${mark.getDate()}" // Muestra el peso y la fecha
+        val mark = marks[position]
+        holder.tvDate.text = mark.getDate().toString()
+        holder.tvValue.text = "${mark.getBodyWeightMark()} kg"
         holder.itemView.setOnLongClickListener {
-            onMarkLongClick?.invoke(mark, position) // Ejecuta el callback si existe
-            true // Indica que el evento fue consumido
+            onMarkLongClick?.invoke(mark, position)
+            true
         }
     }
 
-    override fun getItemCount(): Int = marks.size // Devuelve la cantidad de marcas en la lista
+    override fun getItemCount(): Int = marks.size
 }

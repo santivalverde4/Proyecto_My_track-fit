@@ -14,7 +14,7 @@ import com.example.my_track_fit.R // Acceso a recursos (layouts, ids, etc)
 import com.google.gson.Gson // Para serializar/deserializar JSON
 
 class UserSettingsFragment : Fragment() {
-    val BASE_URL = "http://10.0.2.2:3000"; // URL base del backend
+    val BASE_URL = "http://192.168.100.153:3000"; // URL base del backend
 
     // Infla el layout del fragmento
     override fun onCreateView(

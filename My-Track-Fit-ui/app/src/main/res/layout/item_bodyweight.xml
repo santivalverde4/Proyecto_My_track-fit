@@ -32,8 +32,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="70.5 kg"
+            android:textColor="@color/design_default_color_primary"
             android:textSize="18sp"
-            android:textColor="@color/primary"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -23,7 +23,7 @@ interface ApiService {
 
 // Objeto singleton que configura y expone la instancia de Retrofit
 object RetrofitClient {
-    private const val BASE_URL = "http://10.0.2.2:3000/api/" // URL base del backend
+    private const val BASE_URL = "http://192.168.100.153:3000/api/" // URL base del backend
 
     // Instancia única de ApiService, inicializada solo una vez (lazy)
     val instance: ApiService by lazy {

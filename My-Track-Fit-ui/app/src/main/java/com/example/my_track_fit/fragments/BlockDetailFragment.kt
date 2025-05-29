@@ -84,7 +84,9 @@ class BlockDetailFragment : Fragment() {
         }
 
         // Muestra el nombre del bloque
-        tvBlockName.text = block?.getName() ?: ""
+        //tvBlockName.text = block?.getName() ?: ""
+        
+        tvBlockName.text = "Bloque" //muestra la palbra Bloque
 
         // Obtiene la lista inicial de instancias de ejercicios del bloque
         val initialInstances = block?.getExerciseInstanceList() ?: mutableListOf()
