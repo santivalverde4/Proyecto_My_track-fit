@@ -1,6 +1,6 @@
 # My Track-Fit 🏋️‍♂️
 
-Una aplicación completa de seguimiento de ejercicios y fitness que permite a los usuarios monitorear sus rutinas, progreso y objetivos de entrenamiento.
+Una aplicación completa de seguimiento de ejercicios y fitness que permite a los usuarios monitorear sus rutinas, progreso y objetivos de entrenamiento. Es notable mencionar que la misma fue elaborada como proyecto del curso Requerimientos de Software, impartido por el Dr. Ing. Prof. Mario Chacón Rivas, en el Instituto Tecnológico de Costa Rica. Fue elaborado por Dilan Miguel Hernández Sánchez y Santiago Valverde Álvarez.
 
 ## 📱 Características Principales
 
@@ -283,7 +283,7 @@ Este proyecto está bajo la Licencia MIT - ve el archivo [LICENSE.md](LICENSE.md
 
 ## 🙏 Agradecimientos
 
-- Dr. Ing. Prof. Mario Chacón Rivas (curso de Requerimientos de Software).
+- Dr. Ing. Prof. Mario Chacón Rivas apoyo con revisiones, sugerencias y aprendizaje.
 - Recursos de iconos de [DevIcons](https://devicon.dev/)
 
 ---
