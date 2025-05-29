@@ -26,4 +26,25 @@
         android:layout_height="wrap_content"
         android:text="Cambiar contraseña"
         android:layout_marginTop="24dp"/>
+
+    <Button
+        android:id="@+id/btn_load_routines_cloud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cargar rutinas de la nube"
+        android:layout_marginTop="32dp"/>
+
+    <Button
+        android:id="@+id/btn_download_routines_cloud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descargar rutinas de la nube"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/btn_delete_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eliminar cuenta"
+        android:layout_marginTop="32dp"/>
 </LinearLayout>

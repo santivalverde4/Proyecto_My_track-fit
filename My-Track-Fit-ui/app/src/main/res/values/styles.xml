@@ -1,0 +1,34 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:buttonStyle">@style/RoundedButton</item>
+    </style>
+
+    <style name="RoundedButton">
+        <item name="android:background">@drawable/button_rounded</item>
+        <item name="android:textColor">@color/buttonText</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">96dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="DialogRounded">
+        <item name="android:background">@drawable/dialog_rounded</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:padding">24dp</item>
+    </style>
+
+    <style name="EditTextRounded">
+        <item name="android:background">@drawable/edittext_rounded</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textColorHint">@color/textSecondary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

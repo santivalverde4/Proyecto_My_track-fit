@@ -64,17 +64,14 @@
         android:text="¿No tienes cuenta? Regístrate"
         android:textColor="@color/primary"
         android:textSize="14sp" />
-
     <!-- Enlace para recuperar contraseña -->
     <TextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        android:text="¿Olvidaste tu contraseña?"
+        android:text="¿Olvidaste tu contraseña? Presiona aquí"
         android:textColor="@color/primary"
         android:textSize="14sp" />
-
-
 </LinearLayout>

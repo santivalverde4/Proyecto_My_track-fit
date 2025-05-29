@@ -1,116 +1,36 @@
 package com.example.my_track_fit.network
 
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.GET
-import retrofit2.http.PUT
-import retrofit2.http.DELETE
-import retrofit2.http.Path
-import com.example.my_track_fit.model.Routine
-import com.example.my_track_fit.model.Exercise
+import retrofit2.Call // Permite realizar llamadas HTTP asíncronas o síncronas
+import retrofit2.Retrofit // Clase principal para crear instancias de Retrofit
+import retrofit2.converter.gson.GsonConverterFactory // Convierte JSON a objetos Kotlin y viceversa
+import retrofit2.http.Body // Anotación para indicar el cuerpo de la petición
+import retrofit2.http.POST // Anotación para peticiones POST
 
-// MODELOS
+// Data class para enviar los datos de login o registro al backend
 data class LoginRequest(val Username: String, val Password: String)
 
-data class LoginResponse(
-    val success: Boolean,
-    val message: String,
-    val Id: Int?,
-    val workoutId: Int?
-)
+// Data class que representa la respuesta del backend al hacer login o registro
+data class LoginResponse(val success: Boolean, val message: String, val Id: Int?)
 
-data class ExerciseResponse(val success: Boolean, val exercise: Exercise?)
-
-data class AddExerciseRequest(
-    val name: String,
-    val workoutId: Int
-)
-
-data class WorkoutResponse(
-    val id: Int,
-    val routines: List<Routine>,
-    val exercises: List<Exercise>
-)
-
-data class ExercisesResponse(
-    val exercises: List<Exercise>
-)
-
-data class UpdateExerciseRequest(val name: String)
-
-data class Bodyweight(val id: Int, val peso: Int, val fecha: String)
-data class CreateBodyweightRequest(val userId: Int, val peso: Int)
-data class UpdateBodyweightRequest(val userId: Int, val peso: Int)
-data class DeleteBodyweightRequest(val userId: Int)
-
-data class ForgotPasswordRequest(val Email: String)
-data class ForgotPasswordResponse(val success: Boolean, val message: String)
-
-
-// UpdateProfileRequest.kt
-data class UpdateProfileRequest(val Id: Int, val Username: String, val Email: String, val Password: String)
-
-// UpdateProfileResponse.kt
-data class UpdateProfileResponse(val success: Boolean, val message: String)
-
-// API SERVICE
+// Interfaz que define las rutas del API y los métodos HTTP
 interface ApiService {
-    // Auth
-    @POST("login")
-    fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
+    @POST("login") // Indica que este método hace una petición POST a /login
+    fun loginUser(@Body request: LoginRequest): Call<LoginResponse> // Envía los datos de login y espera una respuesta
 
-    @POST("signup")
-    fun signUpUser(@Body request: SignUpRequest): Call<LoginResponse>
-
-    // Bodyweight
-    @GET("bodyweight/{userId}")
-    fun getBodyweights(@Path("userId") userId: Int): Call<List<Bodyweight>>
-
-    @POST("bodyweight")
-    fun createBodyweight(@Body request: CreateBodyweightRequest): Call<Void>
-
-    @PUT("bodyweight/{id}")
-    fun updateBodyweight(@Path("id") id: Int, @Body request: UpdateBodyweightRequest): Call<Void>
-
-    @HTTP(method = "DELETE", path = "bodyweight/{id}", hasBody = true)
-    fun deleteBodyweight(@Path("id") id: Int, @Body request: DeleteBodyweightRequest): Call<Void>
-
-    @POST("forgot-password")
-    fun forgotPassword(@Body request: ForgotPasswordRequest): Call<ForgotPasswordResponse>
-
-    @PUT("update-profile")
-    fun updateProfile(@Body request: UpdateProfileRequest): Call<UpdateProfileResponse>
-    fun signUpUser(@Body request: LoginRequest): Call<LoginResponse>
-
-    @POST("exercise")
-    fun addExercise(@Body request: AddExerciseRequest): Call<ExerciseResponse>
-
-    @GET("workout/{id}")
-    fun getWorkout(@Path("id") id: Int): Call<WorkoutResponse>
-
-    @GET("workout/{id}/exercises")
-    fun getExercises(@Path("id") id: Int): Call<ExercisesResponse>
-
-    @PUT("exercise/{id}")
-    fun updateExercise(@Path("id") id: Int, @Body request: UpdateExerciseRequest): Call<ExerciseResponse>
-
-    @DELETE("exercise/{id}")
-    fun deleteExercise(@Path("id") id: Int): Call<ExerciseResponse>
-
+    @POST("signup") // Indica que este método hace una petición POST a /signup
+    fun signUpUser(@Body request: LoginRequest): Call<LoginResponse> // Envía los datos de registro y espera una respuesta
 }
 
-// SINGLETON RETROFIT
+// Objeto singleton que configura y expone la instancia de Retrofit
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.100.153:3000/api/"
+    private const val BASE_URL = "http://192.168.100.153:3000/api/" // URL base del backend
 
+    // Instancia única de ApiService, inicializada solo una vez (lazy)
     val instance: ApiService by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
+            .baseUrl(BASE_URL) // Establece la URL base
+            .addConverterFactory(GsonConverterFactory.create()) // Usa Gson para convertir JSON
+            .build() // Construye la instancia de Retrofit
+            .create(ApiService::class.java) // Crea la implementación de la interfaz ApiService
     }
 }
