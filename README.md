@@ -25,7 +25,7 @@ Una aplicación completa de seguimiento de ejercicios y fitness que permite a lo
 - **Node.js**: Entorno de ejecución para JavaScript en el servidor
 - **Express.js**: Framework web minimalista para Node.js
 - **JavaScript**: Lenguaje de programación principal
-- **TypeORM**: ORM (Object-Relational Mapping) para TypeScript y JavaScript
+- **TypeORM**: ORM (Object-Relational Mapping) para JavaScript
 - **SQL Server**: Sistema de gestión de base de datos relacional
 
 ### Mobile
